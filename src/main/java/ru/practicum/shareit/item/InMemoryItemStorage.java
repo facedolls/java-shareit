@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 @Component("InMemoryItemStorage")
 public class InMemoryItemStorage implements ItemStorage {
 
-    public Map<Long, Item> items;
+    private final Map<Long, Item> items;
     private Long currentId;
 
     public InMemoryItemStorage() {
@@ -35,10 +35,10 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Item update(Item item) {
         if (item.getId() == null) {
-            throw new ValidationException("Передан пустой аргумент!");
+            throw new ValidationException("Пустой аргумент");
         }
         if (!items.containsKey(item.getId())) {
-            throw new ItemNotFoundException("Вещь с ID=" + item.getId() + " не найдена!");
+            throw new ItemNotFoundException("Вещь с id=" + item.getId() + " не найдена");
         }
         if (item.getName() == null) {
             item.setName(items.get(item.getId()).getName());
@@ -58,10 +58,10 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Item delete(Long itemId) {
         if (itemId == null) {
-            throw new ValidationException("Передан пустой аргумент!");
+            throw new ValidationException("Пустой аргумент");
         }
         if (!items.containsKey(itemId)) {
-            throw new ItemNotFoundException("Вещь с ID=" + itemId + " не найден!");
+            throw new ItemNotFoundException("Вещь с id=" + itemId + " не найден");
         }
         return items.remove(itemId);
     }
@@ -87,7 +87,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Item getItemById(Long itemId) {
         if (!items.containsKey(itemId)) {
-            throw new ItemNotFoundException("Вещь с ID=" + itemId + " не найдена!");
+            throw new ItemNotFoundException("Вещь с id=" + itemId + " не найдена");
         }
         return items.get(itemId);
     }
@@ -107,7 +107,7 @@ public class InMemoryItemStorage implements ItemStorage {
 
     private boolean isValidItem(Item item) {
         if ((item.getName().isEmpty()) || (item.getDescription().isEmpty()) || (item.getAvailable() == null)) {
-            throw new ValidationException("У вещи некорректные данные");
+            throw new ValidationException("Некорректные данные");
         }
         return true;
     }

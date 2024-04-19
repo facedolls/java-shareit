@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -11,16 +10,11 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 @Service
 public class ItemService {
     private final ItemStorage itemStorage;
     private final ItemMapper mapper;
-
-    @Autowired
-    public ItemService(@Qualifier("InMemoryItemStorage") ItemStorage itemStorage, ItemMapper itemMapper) {
-        this.itemStorage = itemStorage;
-        this.mapper = itemMapper;
-    }
 
     public ItemDto create(ItemDto itemDto, Long ownerId) {
         return mapper.toItemDto(itemStorage.create(mapper.toItem(itemDto, ownerId)));

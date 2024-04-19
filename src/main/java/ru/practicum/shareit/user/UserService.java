@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -9,16 +8,11 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserStorage userStorage;
     private final UserMapper mapper;
-
-    @Autowired
-    public UserService(@Qualifier("InMemoryUserStorage") UserStorage userStorage, UserMapper userMapper) {
-        this.userStorage = userStorage;
-        this.mapper = userMapper;
-    }
 
     public UserDto create(UserDto userDto) {
         return mapper.toUserDto(userStorage.create(mapper.toUser(userDto)));

@@ -1,20 +1,15 @@
 package ru.practicum.shareit.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.UserService;
 
+@RequiredArgsConstructor
 @Service
 public class CheckConsistency {
     private final UserService userService;
     private final ItemService itemService;
-
-    @Autowired
-    public CheckConsistency(UserService userService, ItemService itemService) {
-        this.userService = userService;
-        this.itemService = itemService;
-    }
 
     public boolean isExistUser(Long userId) {
         boolean exist = userService.getUserById(userId) != null;

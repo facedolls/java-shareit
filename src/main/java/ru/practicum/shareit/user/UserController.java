@@ -17,14 +17,12 @@ public class UserController {
     private final UserService userService;
     private CheckConsistency check;
 
-    @ResponseBody
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("POST-запрос к /users на добавление пользователя");
         return userService.create(userDto);
     }
 
-    @ResponseBody
     @PatchMapping("/{userId}")
     public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) {
         log.info("PATCH-запрос к /users на обновление пользователя с id={}", userId);
