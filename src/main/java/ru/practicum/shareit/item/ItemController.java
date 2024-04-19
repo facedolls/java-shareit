@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.service.CheckConsistency;
@@ -9,6 +9,7 @@ import ru.practicum.shareit.service.CheckConsistency;
 import javax.validation.Valid;
 import java.util.List;
 
+@AllArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/items")
@@ -17,13 +18,6 @@ public class ItemController {
     private final ItemService itemService;
 
     private CheckConsistency check;
-
-
-    @Autowired
-    public ItemController(ItemService itemService, CheckConsistency checkConsistency) {
-        this.itemService = itemService;
-        this.check = checkConsistency;
-    }
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable Long itemId) {

@@ -1,26 +1,21 @@
 package ru.practicum.shareit.user;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.service.CheckConsistency;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@AllArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
     private final UserService userService;
     private CheckConsistency check;
-
-    @Autowired
-    public UserController(UserService userService, CheckConsistency checkConsistency) {
-        this.userService = userService;
-        this.check = checkConsistency;
-    }
 
     @ResponseBody
     @PostMapping
