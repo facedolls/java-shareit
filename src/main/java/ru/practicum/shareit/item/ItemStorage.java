@@ -11,11 +11,11 @@ public interface ItemStorage {
 
     Item delete(Long userId);
 
+    void deleteItemsByOwner(Long ownderId);
+
     List<Item> getItemsByOwner(Long ownerId);
 
     List<Item> getItemsBySearchQuery(String text);
-
-    void deleteItemsByOwner(Long ownderId);
 
     Item getItemById(Long itemId);
 }

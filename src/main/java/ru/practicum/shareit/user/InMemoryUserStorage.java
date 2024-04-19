@@ -37,7 +37,7 @@ public class InMemoryUserStorage implements UserStorage {
                 users.put(user.getId(), user);
             }
         } else {
-            throw new UserAlreadyExistsException("Пользователь с E-mail=" + user.getEmail() + " уже существует!");
+            throw new UserAlreadyExistsException("Пользователь с E-mail " + user.getEmail() + " уже существует");
         }
         return user;
     }
@@ -45,10 +45,10 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User update(User user) {
         if (user.getId() == null) {
-            throw new ValidationException("Передан пустой аргумент!");
+            throw new ValidationException("Передан пустой аргумент");
         }
         if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException("Пользователь с ID=" + user.getId() + " не найден!");
+            throw new UserNotFoundException("Пользователь с id=" + user.getId() + " не найден");
         }
         if (user.getName() == null) {
             user.setName(users.get(user.getId()).getName());
@@ -63,7 +63,7 @@ public class InMemoryUserStorage implements UserStorage {
                 users.put(user.getId(), user);
             }
         } else {
-            throw new UserAlreadyExistsException("Пользователь с E-mail=" + user.getEmail() + " уже существует!");
+            throw new UserAlreadyExistsException("Пользователь с E-mail=" + user.getEmail() + " уже существует");
         }
         return user;
     }
@@ -71,7 +71,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUserById(Long userId) {
         if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с ID=" + userId + " не найден!");
+            throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
         }
         return users.get(userId);
     }
@@ -79,17 +79,17 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User delete(Long userId) {
         if (userId == null) {
-            throw new ValidationException("Передан пустой аргумент!");
+            throw new ValidationException("Передан пустой аргумент");
         }
         if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с ID=" + userId + " не найден!");
+            throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
         }
         return users.remove(userId);
     }
 
     private boolean isValidUser(User user) {
         if (!user.getEmail().contains("@")) {
-            throw new ValidationException("Некорректный e-mail пользователя: " + user.getEmail());
+            throw new ValidationException("Некорректный E-mail пользователя: " + user.getEmail());
         }
         if ((user.getName().isEmpty()) || (user.getName().contains(" "))) {
             throw new ValidationException("Некорректный логин пользователя: " + user.getName());

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.service.CheckConsistency;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -13,30 +14,33 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
     private final UserService userService;
+    private CheckConsistency check;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CheckConsistency checkConsistency) {
         this.userService = userService;
+        this.check = checkConsistency;
     }
 
     @ResponseBody
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {
-        log.info("Получен POST-запрос к /users на добавление пользователя");
+        log.info("POST-запрос к /users на добавление пользователя");
         return userService.create(userDto);
     }
 
     @ResponseBody
     @PatchMapping("/{userId}")
     public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) {
-        log.info("Получен PATCH-запрос к /users на обновление пользователя с id={}", userId);
+        log.info("PATCH-запрос к /users на обновление пользователя с id={}", userId);
         return userService.update(userDto, userId);
     }
 
     @DeleteMapping("/{userId}")
     public UserDto delete(@PathVariable Long userId) {
-        log.info("Получен DELETE-запрос к /users на удаление пользователя с id={}", userId);
+        log.info("DELETE-запрос к /users на удаление пользователя с id={}", userId);
         UserDto userDto = userService.delete(userId);
+        check.deleteItemsByUser(userId);
         return userDto;
     }
 

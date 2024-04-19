@@ -20,8 +20,9 @@ public class ItemController {
 
 
     @Autowired
-    public ItemController(ItemService itemService) {
+    public ItemController(ItemService itemService, CheckConsistency checkConsistency) {
         this.itemService = itemService;
+        this.check = checkConsistency;
     }
 
     @GetMapping("/{itemId}")
