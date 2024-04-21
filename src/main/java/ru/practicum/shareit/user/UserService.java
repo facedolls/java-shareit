@@ -38,4 +38,8 @@ public class UserService {
     public UserDto getUserById(Long id) {
         return mapper.toUserDto(userStorage.getUserById(id));
     }
+
+    public boolean isExistUser(Long userId) {
+        return getUserById(userId) != null;
+    }
 }

@@ -53,6 +53,10 @@ public class ItemService {
         itemStorage.deleteItemsByOwner(ownderId);
     }
 
+    public void deleteItemsByUser(Long userId) {
+        deleteItemsByOwner(userId);
+    }
+
     public List<ItemDto> getItemsBySearchQuery(String text) {
         text = text.toLowerCase();
         return itemStorage.getItemsBySearchQuery(text).stream()

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.service.CheckConsistency;
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class ItemController {
     private static final String OWNER = "X-Sharer-User-Id";
     private final ItemService itemService;
-    private final CheckConsistency check;
+    private final UserService userServiceChecker;
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable Long itemId) {
@@ -28,7 +28,7 @@ public class ItemController {
     public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER) Long ownerId) {
         log.info("POST-запрос к /items на добавление вещи владельцем с id={}", ownerId);
         ItemDto newItemDto = null;
-        if (check.isExistUser(ownerId)) {
+        if (userServiceChecker.isExistUser(ownerId)) {
             newItemDto = itemService.create(itemDto, ownerId);
         }
         return newItemDto;
@@ -44,7 +44,7 @@ public class ItemController {
     public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId, @RequestHeader(OWNER) Long ownerId) {
         log.info("PATCH-запрос к /items на обновление вещи с id={}", itemId);
         ItemDto newItemDto = null;
-        if (check.isExistUser(ownerId)) {
+        if (userServiceChecker.isExistUser(ownerId)) {
             newItemDto = itemService.update(itemDto, ownerId, itemId);
         }
         return newItemDto;
