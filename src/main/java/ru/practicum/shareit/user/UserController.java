@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
     private final UserService userService;
-    private CheckConsistency check;
+    private final CheckConsistency check;
 
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {

@@ -12,8 +12,7 @@ public class CheckConsistency {
     private final ItemService itemService;
 
     public boolean isExistUser(Long userId) {
-        boolean exist = userService.getUserById(userId) != null;
-        return exist;
+        return userService.getUserById(userId) != null;
     }
 
     public void deleteItemsByUser(Long userId) {

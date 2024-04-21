@@ -16,7 +16,6 @@ import java.util.List;
 public class ItemController {
     private static final String OWNER = "X-Sharer-User-Id";
     private final ItemService itemService;
-
     private final CheckConsistency check;
 
     @GetMapping("/{itemId}")
