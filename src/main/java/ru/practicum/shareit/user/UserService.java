@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class UserService {
     private final UserStorage userStorage;
-    private final UserMapper mapper;
+    private final UserMapperImpl mapper;
 
     public UserDto create(UserDto userDto) {
         return mapper.toUserDto(userStorage.create(mapper.toUser(userDto)));
