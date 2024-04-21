@@ -2,9 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
 
@@ -15,9 +16,14 @@ import static java.util.stream.Collectors.toList;
 public class ItemService {
     private final ItemStorage itemStorage;
     private final ItemMapper mapper;
+    private final UserService userServiceChecker;
 
     public ItemDto create(ItemDto itemDto, Long ownerId) {
-        return mapper.toItemDto(itemStorage.create(mapper.toItem(itemDto, ownerId)));
+        if (userServiceChecker.isExistUser(ownerId)) {
+            return mapper.toItemDto(itemStorage.create(mapper.toItem(itemDto, ownerId)));
+        } else {
+            return null;
+        }
     }
 
     public List<ItemDto> getItemsByOwner(Long ownderId) {
@@ -36,7 +42,7 @@ public class ItemService {
         }
         Item oldItem = itemStorage.getItemById(itemId);
         if (!oldItem.getOwnerId().equals(ownerId)) {
-            throw new ItemNotFoundException("У пользователя нет такой вещи!");
+            throw new NotFoundException("У пользователя нет такой вещи!");
         }
         return mapper.toItemDto(itemStorage.update(mapper.toItem(itemDto, ownerId)));
     }
@@ -44,17 +50,13 @@ public class ItemService {
     public ItemDto delete(Long itemId, Long ownerId) {
         Item item = itemStorage.getItemById(itemId);
         if (!item.getOwnerId().equals(ownerId)) {
-            throw new ItemNotFoundException("У пользователя нет такой вещи!");
+            throw new NotFoundException("У пользователя нет такой вещи!");
         }
         return mapper.toItemDto(itemStorage.delete(itemId));
     }
 
     public void deleteItemsByOwner(Long ownderId) {
         itemStorage.deleteItemsByOwner(ownderId);
-    }
-
-    public void deleteItemsByUser(Long userId) {
-        deleteItemsByOwner(userId);
     }
 
     public List<ItemDto> getItemsBySearchQuery(String text) {

@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 
@@ -38,7 +38,7 @@ public class InMemoryItemStorage implements ItemStorage {
             throw new ValidationException("Пустой аргумент");
         }
         if (!items.containsKey(item.getId())) {
-            throw new ItemNotFoundException("Вещь с id=" + item.getId() + " не найдена");
+            throw new NotFoundException("Вещь с id=" + item.getId() + " не найдена");
         }
         if (item.getName() == null) {
             item.setName(items.get(item.getId()).getName());
@@ -61,7 +61,7 @@ public class InMemoryItemStorage implements ItemStorage {
             throw new ValidationException("Пустой аргумент");
         }
         if (!items.containsKey(itemId)) {
-            throw new ItemNotFoundException("Вещь с id=" + itemId + " не найден");
+            throw new NotFoundException("Вещь с id=" + itemId + " не найден");
         }
         return items.remove(itemId);
     }
@@ -87,7 +87,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Item getItemById(Long itemId) {
         if (!items.containsKey(itemId)) {
-            throw new ItemNotFoundException("Вещь с id=" + itemId + " не найдена");
+            throw new NotFoundException("Вещь с id=" + itemId + " не найдена");
         }
         return items.get(itemId);
     }

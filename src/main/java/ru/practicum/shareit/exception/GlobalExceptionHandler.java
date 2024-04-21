@@ -11,14 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public GlobalErrorResponse handleUserNotFoundException(final UserNotFoundException exception) {
-        log.warn("404 {}", exception.getMessage(), exception);
-        return new GlobalErrorResponse(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public GlobalErrorResponse handleItemNotFoundException(final ItemNotFoundException exception) {
+    public GlobalErrorResponse handleNotFoundException(final NotFoundException exception) {
         log.warn("404 {}", exception.getMessage(), exception);
         return new GlobalErrorResponse(exception.getMessage());
     }

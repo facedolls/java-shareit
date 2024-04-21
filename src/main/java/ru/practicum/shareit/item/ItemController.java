@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
 public class ItemController {
     private static final String OWNER = "X-Sharer-User-Id";
     private final ItemService itemService;
-    private final UserService userServiceChecker;
 
     @GetMapping("/{itemId}")
     public ItemDto getItemById(@PathVariable Long itemId) {
@@ -27,11 +25,7 @@ public class ItemController {
     @PostMapping
     public ItemDto create(@Valid @RequestBody ItemDto itemDto, @RequestHeader(OWNER) Long ownerId) {
         log.info("POST-запрос к /items на добавление вещи владельцем с id={}", ownerId);
-        ItemDto newItemDto = null;
-        if (userServiceChecker.isExistUser(ownerId)) {
-            newItemDto = itemService.create(itemDto, ownerId);
-        }
-        return newItemDto;
+        return itemService.create(itemDto, ownerId);
     }
 
     @GetMapping
@@ -41,13 +35,10 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId, @RequestHeader(OWNER) Long ownerId) {
+    public ItemDto update(@RequestBody ItemDto itemDto, @PathVariable Long itemId,
+                          @RequestHeader(OWNER) Long ownerId) {
         log.info("PATCH-запрос к /items на обновление вещи с id={}", itemId);
-        ItemDto newItemDto = null;
-        if (userServiceChecker.isExistUser(ownerId)) {
-            newItemDto = itemService.update(itemDto, ownerId, itemId);
-        }
-        return newItemDto;
+        return itemService.update(itemDto, ownerId, itemId);
     }
 
     @DeleteMapping("/{itemId}")

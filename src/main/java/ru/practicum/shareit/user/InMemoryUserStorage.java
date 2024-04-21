@@ -1,8 +1,8 @@
 package ru.practicum.shareit.user;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.UserAlreadyExistsException;
-import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new ValidationException("Передан пустой аргумент");
         }
         if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException("Пользователь с id=" + user.getId() + " не найден");
+            throw new NotFoundException("Пользователь с id=" + user.getId() + " не найден");
         }
         if (user.getName() == null) {
             user.setName(users.get(user.getId()).getName());
@@ -70,7 +70,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUserById(Long userId) {
         if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
+            throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
         return users.get(userId);
     }
@@ -81,7 +81,7 @@ public class InMemoryUserStorage implements UserStorage {
             throw new ValidationException("Передан пустой аргумент");
         }
         if (!users.containsKey(userId)) {
-            throw new UserNotFoundException("Пользователь с id=" + userId + " не найден");
+            throw new NotFoundException("Пользователь с id=" + userId + " не найден");
         }
         return users.remove(userId);
     }

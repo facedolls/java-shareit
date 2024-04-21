@@ -3,7 +3,6 @@ package ru.practicum.shareit.user;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
@@ -15,7 +14,6 @@ import java.util.List;
 @RequestMapping(path = "/users")
 public class UserController {
     private final UserService userService;
-    private final ItemService itemServiceChecker;
 
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {
@@ -32,9 +30,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public UserDto delete(@PathVariable Long userId) {
         log.info("DELETE-запрос к /users на удаление пользователя с id={}", userId);
-        UserDto userDto = userService.delete(userId);
-        itemServiceChecker.deleteItemsByUser(userId);
-        return userDto;
+        return userService.delete(userId);
     }
 
     @GetMapping

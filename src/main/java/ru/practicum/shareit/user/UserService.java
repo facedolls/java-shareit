@@ -18,6 +18,10 @@ public class UserService {
         return mapper.toUserDto(userStorage.create(mapper.toUser(userDto)));
     }
 
+    public boolean isExistUser(Long userId) {
+        return getUserById(userId) != null;
+    }
+
     public UserDto update(UserDto userDto, Long id) {
         if (userDto.getId() == null) {
             userDto.setId(id);
@@ -37,9 +41,5 @@ public class UserService {
 
     public UserDto getUserById(Long id) {
         return mapper.toUserDto(userStorage.getUserById(id));
-    }
-
-    public boolean isExistUser(Long userId) {
-        return getUserById(userId) != null;
     }
 }
