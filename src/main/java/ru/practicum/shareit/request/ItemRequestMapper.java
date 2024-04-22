@@ -1,13 +1,10 @@
 package ru.practicum.shareit.request;
 
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
-public class ItemRequestMapper {
-    public static ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
-        return new ItemRequestDto(
-                itemRequest.getDescription(),
-                itemRequest.getConsumer(),
-                itemRequest.getCreated()
-        );
-    }
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface ItemRequestMapper {
+    ItemRequestDto toItemRequest(ItemRequest model);
 }
