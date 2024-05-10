@@ -1,45 +1,19 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.List;
+import java.util.Collection;
 
-import static java.util.stream.Collectors.toList;
+public interface UserService {
+    UserDto getUserById(Long userId);
 
-@RequiredArgsConstructor
-@Service
-public class UserService {
-    private final UserStorage userStorage;
-    private final UserMapper mapper;
+    User getById(Long userId);
 
-    public UserDto create(UserDto userDto) {
-        return mapper.toUserDto(userStorage.create(mapper.toUser(userDto)));
-    }
+    Collection<UserDto> getAllUserDto();
 
-    public boolean isExistUser(Long userId) {
-        return getUserById(userId) != null;
-    }
+    UserDto createUser(UserDto userDto);
 
-    public UserDto update(UserDto userDto, Long id) {
-        if (userDto.getId() == null) {
-            userDto.setId(id);
-        }
-        return mapper.toUserDto(userStorage.update(mapper.toUser(userDto)));
-    }
+    UserDto updateUser(Long userId, UserDto userDto);
 
-    public UserDto delete(Long userId) {
-        return mapper.toUserDto(userStorage.delete(userId));
-    }
-
-    public List<UserDto> getUsers() {
-        return userStorage.getUsers().stream()
-                .map(mapper::toUserDto)
-                .collect(toList());
-    }
-
-    public UserDto getUserById(Long id) {
-        return mapper.toUserDto(userStorage.getUserById(id));
-    }
+    void deleteUserById(Long userId);
 }

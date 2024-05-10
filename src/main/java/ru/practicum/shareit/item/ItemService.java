@@ -1,68 +1,24 @@
 package ru.practicum.shareit.item;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoInfo;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserService;
 
-import java.util.List;
+import java.util.Collection;
 
-import static java.util.stream.Collectors.toList;
+public interface ItemService {
+    ItemDtoInfo getItemById(Long itemId, Long userId);
 
-@RequiredArgsConstructor
-@Service
-public class ItemService {
-    private final ItemStorage itemStorage;
-    private final ItemMapper mapper;
-    private final UserService userServiceChecker;
+    Item getItemByIdAvailable(Long itemId, Long userId);
 
-    public ItemDto create(ItemDto itemDto, Long ownerId) {
-        if (userServiceChecker.isExistUser(ownerId)) {
-            return mapper.toItemDto(itemStorage.create(mapper.toItem(itemDto, ownerId)));
-        } else {
-            return null;
-        }
-    }
+    Collection<ItemDtoInfo> getAllItemUser(Long userId);
 
-    public List<ItemDto> getItemsByOwner(Long ownderId) {
-        return itemStorage.getItemsByOwner(ownderId).stream()
-                .map(mapper::toItemDto)
-                .collect(toList());
-    }
+    ItemDto createItem(Long userId, ItemDto itemDto);
 
-    public ItemDto getItemById(Long id) {
-        return mapper.toItemDto(itemStorage.getItemById(id));
-    }
+    ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto);
 
-    public ItemDto update(ItemDto itemDto, Long ownerId, Long itemId) {
-        if (itemDto.getId() == null) {
-            itemDto.setId(itemId);
-        }
-        Item oldItem = itemStorage.getItemById(itemId);
-        if (!oldItem.getOwnerId().equals(ownerId)) {
-            throw new NotFoundException("У пользователя нет такой вещи!");
-        }
-        return mapper.toItemDto(itemStorage.update(mapper.toItem(itemDto, ownerId)));
-    }
+    Collection<ItemDto> searchItems(String text);
 
-    public ItemDto delete(Long itemId, Long ownerId) {
-        Item item = itemStorage.getItemById(itemId);
-        if (!item.getOwnerId().equals(ownerId)) {
-            throw new NotFoundException("У пользователя нет такой вещи!");
-        }
-        return mapper.toItemDto(itemStorage.delete(itemId));
-    }
-
-    public void deleteItemsByOwner(Long ownderId) {
-        itemStorage.deleteItemsByOwner(ownderId);
-    }
-
-    public List<ItemDto> getItemsBySearchQuery(String text) {
-        text = text.toLowerCase();
-        return itemStorage.getItemsBySearchQuery(text).stream()
-                .map(mapper::toItemDto)
-                .collect(toList());
-    }
+    CommentDto createComment(CommentDto commentDto, Long userId, Long itemId);
 }
