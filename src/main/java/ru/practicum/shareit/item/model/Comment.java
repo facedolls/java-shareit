@@ -20,12 +20,12 @@ public class Comment {
     private Long id;
     private String text;
     private LocalDateTime created;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "item_id")
     @ToString.Exclude
     private Item item;
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @ToString.Exclude
     private User user;
 }

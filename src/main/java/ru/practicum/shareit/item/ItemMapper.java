@@ -2,7 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -10,21 +10,28 @@ import ru.practicum.shareit.item.dto.ItemDtoInfo;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface ItemMapper {
-    Item toItem(ItemDto model, User owner);
+    @Mapping(target = "id", source = "itemDto.id")
+    @Mapping(target = "name", source = "itemDto.name")
+    @Mapping(target = "request", ignore = true)
+    Item toItem(ItemDto itemDto, User owner);
 
-    ItemDto toItemDto(Item dto);
+    @Mapping(target = "requestId", ignore = true)
+    ItemDto toItemDto(Item item);
 
-    ItemDtoInfo toItemDtoInfo(Item item, Map<Long, List<CommentDto>> comments);
+    @Mapping(target = "lastBooking", ignore = true)
+    @Mapping(target = "nextBooking", ignore = true)
+    @Mapping(target = "comments", source = "commentDto")
+    ItemDtoInfo toOneItemDtoInfoForAllUsers(Item item, List<CommentDto> commentDto);
 
-    ItemDtoInfo toItemDtoInfo(Item item, BookingDtoInfo next, BookingDtoInfo last, List<CommentDto> comments);
+    @Mapping(target = "id", source = "item.id")
+    @Mapping(target = "lastBooking", source = "last")
+    @Mapping(target = "nextBooking", source = "next")
+    ItemDtoInfo toOneItemDtoInfoForOwner(Item item, BookingDtoInfo next, BookingDtoInfo last, List<CommentDto> comments);
 
-    Collection<ItemDto> toItemDto(Collection<Item> items);
+    Collection<ItemDto> toItemDtoCollection(Collection<Item> items);
 }

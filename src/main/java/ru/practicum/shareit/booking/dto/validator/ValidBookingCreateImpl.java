@@ -25,7 +25,7 @@ public class ValidBookingCreateImpl implements ConstraintValidator<ValidBookingC
                 || booking.getStart().isBefore(currentTime)
                 || booking.getStart().isEqual(booking.getEnd())
                 || booking.getEnd().isBefore(currentTime)) {
-            log.warn("Start time={} of the booking is after the end time={}, or it's before the current time={}",
+            log.warn("Start time={} of booking is after end time={}, or it's before current time={}",
                     booking.getStart(), booking.getEnd(), currentTime);
             return false;
         }

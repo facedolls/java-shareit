@@ -1,18 +1,21 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.ItemDtoInfo;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserMapper;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.BookingStatus.WAITING;
@@ -34,7 +37,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public Collection<BookingDto> toBookingDto(Collection<Booking> booking) {
+    public Collection<BookingDto> toBookingDtoCollection(Collection<Booking> booking) {
         return booking.stream()
                 .map(this::toBookingDto)
                 .collect(Collectors.toList());
@@ -61,59 +64,32 @@ public class BookingMapper {
                 .build();
     }
 
-    public List<BookingDtoInfo> toBookingDtoInfo(List<Booking> bookings) {
+    public List<BookingDtoInfo> toBookingDtoInfoList(List<Booking> bookings) {
         return bookings.stream()
                 .map(this::toBookingDtoInfo)
                 .collect(Collectors.toList());
     }
 
-    public Map<Long, BookingDtoInfo> toBookingDtoInfoMap(List<BookingDtoInfo> booking) {
+    public Map<Long, BookingDtoInfo> toBookingDtoInfoMapByIdItem(List<BookingDtoInfo> booking) {
         return booking.stream().collect(Collectors.toMap(
                 BookingDtoInfo::getItemId, bookingDtoInfo -> bookingDtoInfo));
     }
-
-    public Map<String, Map<Long, BookingDtoInfo>> toBookingDtoInfo(List<Booking> nextBookings,
-                                                                   List<Booking> lastBookings) {
-        List<BookingDtoInfo> nextBookingDtoInfo = toBookingDtoInfo(nextBookings);
-        List<BookingDtoInfo> lastBookingDtoInfo = toBookingDtoInfo(lastBookings);
-
-        Map<Long, BookingDtoInfo> next = toBookingDtoInfoMap(nextBookingDtoInfo);
-        Map<Long, BookingDtoInfo> last = toBookingDtoInfoMap(lastBookingDtoInfo);
-        Map<String, Map<Long, BookingDtoInfo>> result = new HashMap<>();
-
-        if (!next.isEmpty()) {
-            result.put("next", next);
-        }
-        if (!last.isEmpty()) {
-            result.put("last", last);
-        }
-        return result;
-    }
-
-    public Collection<ItemDtoInfo> toItemDtoForOwner(List<Item> items, List<Booking> next, List<Booking> last,
-                                                     Map<Long, List<CommentDto>> commentsItem) {
-        if (commentsItem == null) {
-            return new ArrayList<>();
-        }
-        Map<String, Map<Long, BookingDtoInfo>> booking = toBookingDtoInfo(next, last);
-        Map<Long, BookingDtoInfo> nextBooking = booking.get("next");
-        Map<Long, BookingDtoInfo> lastBooking = booking.get("last");
-        return items.stream()
-                .map(item -> {
-                    BookingDtoInfo nextDto = null;
-                    BookingDtoInfo lastDto = null;
-                    List<CommentDto> commentDto = new ArrayList<>();
-                    if (nextBooking != null && nextBooking.containsKey(item.getId())) {
-                        nextDto = nextBooking.get(item.getId());
-                    }
-                    if (lastBooking != null && lastBooking.containsKey(item.getId())) {
-                        lastDto = lastBooking.get(item.getId());
-                    }
-                    if (commentsItem.containsKey(item.getId())) {
-                        commentDto = commentsItem.get(item.getId());
-                    }
-                    return itemMapper.toItemDtoInfo(item, nextDto, lastDto, commentDto);
-                }).sorted(Comparator.comparing(ItemDtoInfo::getId))
-                .collect(Collectors.toList());
-    }
 }
+
+//@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+//public interface BookingMapper {
+//    BookingDto toBookingDto(Booking booking);
+//
+//    Collection<BookingDto> toBookingDtoCollection(Collection<Booking> booking);
+//
+//    @Mapping(target = "id", source = "bookingDtoCreate.itemId")
+//    @Mapping(target = "booker", source = "user")
+//    @Mapping(target = "status", source = WAITING)
+//    Booking toBooking(BookingDtoCreate bookingDtoCreate, User user, Item item);
+//
+//    BookingDtoInfo toBookingDtoInfo(Booking booking);
+//
+//    List<BookingDtoInfo> toBookingDtoInfoList(List<Booking> bookings);
+//
+//    Map<Long, BookingDtoInfo> toBookingDtoInfoMapByIdItem(List<BookingDtoInfo> booking);
+//}

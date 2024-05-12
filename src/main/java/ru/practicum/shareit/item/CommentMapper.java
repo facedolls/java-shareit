@@ -1,7 +1,5 @@
 package ru.practicum.shareit.item;
 
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
@@ -10,15 +8,6 @@ import ru.practicum.shareit.user.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-//@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-//public interface CommentMapper {
-//    Comment toComment(CommentDto model, User user, Item item);
-//
-//    CommentDto toCommentDto(Comment dto, String authorName, Long itemId);
-//
-//    List<CommentDto> toCommentDto(List<Comment> comments);
-//}
 
 @Component
 public class CommentMapper {
@@ -32,7 +21,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public List<CommentDto> toCommentDto(List<Comment> comments) {
+    public List<CommentDto> toCommentDtoList(List<Comment> comments) {
         return comments.stream()
                 .map(this::toCommentDto)
                 .collect(Collectors.toList());
@@ -48,4 +37,3 @@ public class CommentMapper {
                 .build();
     }
 }
-

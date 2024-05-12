@@ -1,19 +1,97 @@
 package ru.practicum.shareit.user;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.ValidationException;
 import java.util.Collection;
+import java.util.List;
 
-public interface UserService {
-    UserDto getUserById(Long userId);
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class UserService {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    User getById(Long userId);
+    @Transactional(readOnly = true)
+    public UserDto getUserDtoById(Long userId) {
+        User user = getUserById(userId);
+        return userMapper.toUserDto(user);
+    }
 
-    Collection<UserDto> getAllUserDto();
+    @Transactional(readOnly = true)
+    public User getUserById(Long userId) {
+        User user = userRepository.findById(userId).stream().findFirst().orElse(null);
+        if (user == null) {
+            log.warn("User with id={} not found", userId);
+            throw new NotFoundException("User with id=" + userId + " not found");
+        }
+        log.info("User was received by id={}", userId);
+        return user;
+    }
 
-    UserDto createUser(UserDto userDto);
+    @Transactional(readOnly = true)
+    public Collection<UserDto> getAllUserDto() {
+        log.info("All users have been received");
+        List<User> allUsers = userRepository.findAll();
+        return userMapper.toUserDtoCollection(allUsers);
+    }
 
-    UserDto updateUser(Long userId, UserDto userDto);
+    @Transactional
+    public UserDto createUser(UserDto userDto) {
+        try {
+            User createdUser = userRepository.save(userMapper.toUser(userDto));
+            log.info("User has been created={}", createdUser);
+            return userMapper.toUserDto(createdUser);
+        } catch (Exception e) {
+            throw new ConflictException(e.getMessage());
+        }
+    }
 
-    void deleteUserById(Long userId);
+    @Transactional
+    public UserDto updateUser(Long userId, UserDto userDtoNew) {
+        User userOld = userRepository.findById(userId).stream().findFirst().orElse(null);
+        if (userOld == null) {
+            log.warn("User with this id={} not already exists", userId);
+            throw new ValidationException("User with this id=" + userId + " not already exists");
+        }
+
+        isExistEmail(userDtoNew.getEmail(), userOld.getEmail());
+        User updatedUser = userRepository.save(setUser(userOld, userDtoNew));
+        log.info("User has been updated={}", updatedUser);
+        return userMapper.toUserDto(updatedUser);
+    }
+
+    @Transactional
+    public void deleteUserById(Long userId) {
+        log.info("User with id={} deleted", userId);
+        userRepository.deleteById(userId);
+    }
+
+    private void isExistEmail(String emailNew, String emailOld) {
+        if (emailNew == null) {
+            return;
+        }
+        boolean isExistEmail = userRepository.existsByEmail(emailNew);
+        if (isExistEmail && !emailNew.equals(emailOld)) {
+            log.warn("User with this email={} already exists", emailNew);
+            throw new ConflictException("User with this email=" + emailNew + " already exists");
+        }
+    }
+
+    private User setUser(User userOld, UserDto userDtoNew) {
+        if (userDtoNew.getName() != null && !userDtoNew.getName().isEmpty()) {
+            userOld.setName(userDtoNew.getName());
+        }
+        if (userDtoNew.getEmail() != null && !userDtoNew.getEmail().isEmpty()) {
+            userOld.setEmail(userDtoNew.getEmail());
+        }
+        return userOld;
+    }
 }

@@ -16,10 +16,10 @@ public class ItemDto {
     @Positive
     private Long id;
     @NotBlank
-    @Size
+    @Size(max = 50)
     private String name;
     @NotBlank
-    @Size
+    @Size(max = 200)
     private String description;
     @NotNull
     private Boolean available;

@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidBookingCreateImpl.class)
 public @interface ValidBookingCreate {
-    String message() default "Start date and time must not be later than the end date and time. " +
-            "Start date and time and the end date and time must not be in the past. " +
-            "Start date and time and the end date and time must not be equal";
+    String message() default "Start date and time must not be later than end date and time. " +
+            "Start date and time and end date and time must not be in past. " +
+            "Start date and time and end date and time must not be equal";
 
     Class<?>[] groups() default {};
 
