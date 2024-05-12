@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoInfo;
+import ru.practicum.shareit.validated.Create;
+import ru.practicum.shareit.validated.Update;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -31,13 +33,13 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem(@Validated @RequestBody ItemDto itemDto,
+    public ItemDto createItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.createItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@Validated @RequestBody ItemDto itemDto,
+    public ItemDto updateItem(@Validated(Update.class) @RequestBody ItemDto itemDto,
                               @PathVariable @Positive @NotNull Long itemId,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.updateItem(userId, itemId, itemDto);

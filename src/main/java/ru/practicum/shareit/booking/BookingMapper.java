@@ -1,9 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
@@ -75,21 +72,3 @@ public class BookingMapper {
                 BookingDtoInfo::getItemId, bookingDtoInfo -> bookingDtoInfo));
     }
 }
-
-//@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-//public interface BookingMapper {
-//    BookingDto toBookingDto(Booking booking);
-//
-//    Collection<BookingDto> toBookingDtoCollection(Collection<Booking> booking);
-//
-//    @Mapping(target = "id", source = "bookingDtoCreate.itemId")
-//    @Mapping(target = "booker", source = "user")
-//    @Mapping(target = "status", source = WAITING)
-//    Booking toBooking(BookingDtoCreate bookingDtoCreate, User user, Item item);
-//
-//    BookingDtoInfo toBookingDtoInfo(Booking booking);
-//
-//    List<BookingDtoInfo> toBookingDtoInfoList(List<Booking> bookings);
-//
-//    Map<Long, BookingDtoInfo> toBookingDtoInfoMapByIdItem(List<BookingDtoInfo> booking);
-//}

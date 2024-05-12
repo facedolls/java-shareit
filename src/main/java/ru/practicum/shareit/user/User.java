@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -8,9 +9,6 @@ import javax.persistence.*;
 @Table(name = "users")
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
