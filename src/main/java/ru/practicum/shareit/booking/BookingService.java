@@ -63,7 +63,7 @@ public class BookingService {
         userService.getUserById(userId);
         Collection<Booking> allBookings = getBookingsForBooker(bookingState, userId);
         log.info("Information about bookings was obtained by booker id={}", userId);
-        return bookingMapper.toBookingDtoCollection(allBookings);
+        return bookingMapper.toBookingDto(allBookings);
     }
 
     @Transactional(readOnly = true)
@@ -71,7 +71,7 @@ public class BookingService {
         userService.getUserById(userId);
         Collection<Booking> allBookings = getBookingsForOwner(bookingState, userId);
         log.info("Information about bookings was obtained by owner id={}", userId);
-        return bookingMapper.toBookingDtoCollection(allBookings);
+        return bookingMapper.toBookingDto(allBookings);
     }
 
     private Booking isBookingExistAndNotWaiting(Long userId, Long bookingId) {

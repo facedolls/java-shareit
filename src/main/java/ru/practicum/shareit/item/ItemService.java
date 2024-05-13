@@ -179,11 +179,11 @@ public class ItemService {
 
     private Map<String, Map<Long, BookingDtoInfo>> getBookingDtoInfoMapByNextAndLast(List<Booking> nextBookings,
                                                                                      List<Booking> lastBookings) {
-        List<BookingDtoInfo> nextBookingDtoInfo = bookingMapper.toBookingDtoInfoList(nextBookings);
-        List<BookingDtoInfo> lastBookingDtoInfo = bookingMapper.toBookingDtoInfoList(lastBookings);
+        List<BookingDtoInfo> nextBookingDtoInfo = bookingMapper.toBookingDtoInfo(nextBookings);
+        List<BookingDtoInfo> lastBookingDtoInfo = bookingMapper.toBookingDtoInfo(lastBookings);
 
-        Map<Long, BookingDtoInfo> next = bookingMapper.toBookingDtoInfoMapByIdItem(nextBookingDtoInfo);
-        Map<Long, BookingDtoInfo> last = bookingMapper.toBookingDtoInfoMapByIdItem(lastBookingDtoInfo);
+        Map<Long, BookingDtoInfo> next = bookingMapper.toBookingDtoInfoMap(nextBookingDtoInfo);
+        Map<Long, BookingDtoInfo> last = bookingMapper.toBookingDtoInfoMap(lastBookingDtoInfo);
         Map<String, Map<Long, BookingDtoInfo>> result = new HashMap<>();
 
         if (!next.isEmpty()) {

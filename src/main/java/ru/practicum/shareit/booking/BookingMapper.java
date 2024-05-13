@@ -1,7 +1,8 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
@@ -15,59 +16,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.booking.BookingStatus.WAITING;
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        uses = {ItemMapper.class, UserMapper.class})
+public interface BookingMapper {
+    // check
+    BookingDto toBookingDto(Booking booking);
 
-@Component
-@RequiredArgsConstructor
-public class BookingMapper {
-    private final ItemMapper itemMapper;
-    private final UserMapper userMapper;
+    // check
+    Collection<BookingDto> toBookingDto(Collection<Booking> booking);
 
-    public BookingDto toBookingDto(Booking booking) {
-        return BookingDto.builder()
-                .id(booking.getId())
-                .start(booking.getStart())
-                .end(booking.getEnd())
-                .item(itemMapper.toItemDto(booking.getItem()))
-                .booker(userMapper.toUserDto(booking.getBooker()))
-                .status(booking.getStatus())
-                .build();
-    }
+    // check
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "booker", source = "user")
+    @Mapping(target = "status", constant = "WAITING")
+    Booking toBooking(BookingDtoCreate bookingDtoCreate, User user, Item item);
 
-    public Collection<BookingDto> toBookingDtoCollection(Collection<Booking> booking) {
-        return booking.stream()
-                .map(this::toBookingDto)
-                .collect(Collectors.toList());
-    }
+    // check
+    @Mapping(target = "bookerId", source = "booker.id")
+    @Mapping(target = "itemId", source = "item.id")
+    BookingDtoInfo toBookingDtoInfo(Booking booking);
 
-    public Booking toBooking(BookingDtoCreate bookingDtoCreate, User user, Item item) {
-        return Booking.builder()
-                .start(bookingDtoCreate.getStart())
-                .end(bookingDtoCreate.getEnd())
-                .item(item)
-                .booker(user)
-                .status(WAITING)
-                .build();
-    }
+    // check
+    List<BookingDtoInfo> toBookingDtoInfo(List<Booking> bookings);
 
-    public BookingDtoInfo toBookingDtoInfo(Booking booking) {
-        return BookingDtoInfo.builder()
-                .id(booking.getId())
-                .bookerId(booking.getBooker().getId())
-                .start(booking.getStart())
-                .end(booking.getEnd())
-                .status(booking.getStatus())
-                .itemId(booking.getItem().getId())
-                .build();
-    }
-
-    public List<BookingDtoInfo> toBookingDtoInfoList(List<Booking> bookings) {
-        return bookings.stream()
-                .map(this::toBookingDtoInfo)
-                .collect(Collectors.toList());
-    }
-
-    public Map<Long, BookingDtoInfo> toBookingDtoInfoMapByIdItem(List<BookingDtoInfo> booking) {
+    default Map<Long, BookingDtoInfo> toBookingDtoInfoMap(List<BookingDtoInfo> booking) {
         return booking.stream().collect(Collectors.toMap(
                 BookingDtoInfo::getItemId, bookingDtoInfo -> bookingDtoInfo));
     }
