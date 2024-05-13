@@ -15,6 +15,7 @@ import ru.practicum.shareit.user.UserService;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 import static ru.practicum.shareit.booking.BookingStatus.*;
 
@@ -135,5 +136,19 @@ public class BookingService {
                         .findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(userId, current, current);
         }
         return bookingRepository.findAllByBooker_IdOrderByStartDesc(userId);
+    }
+
+    public List<Booking> getNextBookingsForOwner(LocalDateTime current, List<Long> itemsId, BookingStatus status) {
+        return bookingRepository.findNextBookingsForOwner(current, itemsId, status);
+    }
+
+    public List<Booking> getLastBookingsForOwner(LocalDateTime current, List<Long> itemsId, BookingStatus status) {
+        return bookingRepository.findLastBookingsForOwner(current, itemsId, status);
+    }
+
+    public Boolean isExistsByItemIdAndBookerIdAndStatusAndEndBefore(Long itemId, Long userId, BookingStatus bookingStatus,
+                                                                    LocalDateTime localDateTime) {
+        return bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(
+                itemId, userId, bookingStatus, localDateTime);
     }
 }

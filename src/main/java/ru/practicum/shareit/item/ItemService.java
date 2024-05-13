@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -32,8 +32,8 @@ public class ItemService {
     private static final String NEXT = "next";
     private static final String LAST = "last";
     private final ItemRepository itemRepository;
-    private final CommentRepository commentRepository;
-    private final BookingRepository bookingRepository;
+    private final CommentService commentService;
+    private final BookingService bookingService;
     private final UserService userService;
     private final ItemMapper itemMapper;
     private final UserMapper userMapper;
@@ -43,7 +43,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemDtoInfo getItemDtoById(Long itemId, Long userId) {
         Item item = getItemById(itemId, userId);
-        List<Comment> comments = commentRepository.findByItem_Id(itemId);
+        List<Comment> comments = commentService.getCommentsByItemId(itemId);
         Map<Long, List<CommentDto>> commentsItem = getCommentDtoSortByIdItem(comments);
         boolean isOwner = itemRepository.existsByIdAndOwner_Id(itemId, userId);
         if (!isOwner) {
@@ -69,7 +69,7 @@ public class ItemService {
     public Collection<ItemDtoInfo> getAllItemUser(Long userId) {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
         List<Long> itemsId = items.stream().map(Item::getId).collect(Collectors.toList());
-        List<Comment> comments = commentRepository.findAllByItem_IdIn(itemsId);
+        List<Comment> comments = commentService.getCommentsByItemIdIn(itemsId);
         Map<Long, List<CommentDto>> commentsItems = getCommentDtoSortByIdItem(comments);
         log.info("All items have been received");
         return setBookingsForOwner(items, itemsId, commentsItems);
@@ -117,7 +117,7 @@ public class ItemService {
         commentDto.setCreated(LocalDateTime.now());
 
         Comment comment = commentMapper.toComment(commentDto, user, item);
-        comment = commentRepository.save(comment);
+        comment = commentService.saveComment(comment);
         log.info("Created comment id={} about item={} by user id={}", comment.getId(), itemId, userId);
         return commentMapper.toCommentDto(comment);
     }
@@ -148,8 +148,8 @@ public class ItemService {
     private Collection<ItemDtoInfo> setBookingsForOwner(List<Item> items, List<Long> itemsId,
                                                         Map<Long, List<CommentDto>> commentsItem) {
         LocalDateTime current = LocalDateTime.now();
-        List<Booking> nextBookings = bookingRepository.findNextBookingsForOwner(current, itemsId, APPROVED);
-        List<Booking> lastBookings = bookingRepository.findLastBookingsForOwner(current, itemsId, APPROVED);
+        List<Booking> nextBookings = bookingService.getNextBookingsForOwner(current, itemsId, APPROVED);
+        List<Booking> lastBookings = bookingService.getLastBookingsForOwner(current, itemsId, APPROVED);
         return getItemDtoInfoForOwner(items, nextBookings, lastBookings, commentsItem);
     }
 
@@ -212,7 +212,7 @@ public class ItemService {
     }
 
     private void isBookerOfThisItem(Long userId, Long itemId) {
-        boolean isValid = bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(
+        boolean isValid = bookingService.isExistsByItemIdAndBookerIdAndStatusAndEndBefore(
                 itemId, userId, APPROVED, LocalDateTime.now());
         if (!isValid) {
             throw new ValidationException("Only users whose booking has expired can leave comments");
