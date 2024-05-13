@@ -43,7 +43,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemDtoInfo getItemDtoById(Long itemId, Long userId) {
         Item item = getItemById(itemId, userId);
-        List<Comment> comments = commentRepository.findByItem_Id(itemId).orElse(new ArrayList<>());
+        List<Comment> comments = commentRepository.findByItem_Id(itemId);
         Map<Long, List<CommentDto>> commentsItem = getCommentDtoSortByIdItem(comments);
         boolean isOwner = itemRepository.existsByIdAndOwner_Id(itemId, userId);
         if (!isOwner) {
@@ -69,7 +69,7 @@ public class ItemService {
     public Collection<ItemDtoInfo> getAllItemUser(Long userId) {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
         List<Long> itemsId = items.stream().map(Item::getId).collect(Collectors.toList());
-        List<Comment> comments = commentRepository.findAllByItem_IdIn(itemsId).orElse(new ArrayList<>());
+        List<Comment> comments = commentRepository.findAllByItem_IdIn(itemsId);
         Map<Long, List<CommentDto>> commentsItems = getCommentDtoSortByIdItem(comments);
         log.info("All items have been received");
         return setBookingsForOwner(items, itemsId, commentsItems);
