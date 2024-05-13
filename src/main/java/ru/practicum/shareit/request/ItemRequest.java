@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "requests")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemRequest {

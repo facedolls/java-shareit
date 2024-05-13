@@ -1,39 +1,23 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Component
-public class CommentMapper {
-    public CommentDto toCommentDto(Comment comment) {
-        return CommentDto.builder()
-                .id(comment.getId())
-                .text(comment.getText())
-                .authorName(comment.getUser().getName())
-                .created(comment.getCreated())
-                .itemId(comment.getItem().getId())
-                .build();
-    }
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface CommentMapper {
+    @Mapping(target = "authorName", source = "user.name")
+    @Mapping(target = "itemId", source = "item.id")
+    CommentDto toCommentDto(Comment comment);
 
-    public List<CommentDto> toCommentDtoList(List<Comment> comments) {
-        return comments.stream()
-                .map(this::toCommentDto)
-                .collect(Collectors.toList());
-    }
+    List<CommentDto> toCommentDtoList(List<Comment> comments);
 
-    public Comment toComment(CommentDto commentDto, User user, Item item) {
-        return Comment.builder()
-                .id(commentDto.getId())
-                .text(commentDto.getText())
-                .created(commentDto.getCreated())
-                .item(item)
-                .user(user)
-                .build();
-    }
+    @Mapping(target = "id", source = "commentDto.id")
+    Comment toComment(CommentDto commentDto, User user, Item item);
 }
