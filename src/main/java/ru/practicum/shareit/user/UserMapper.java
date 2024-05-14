@@ -4,9 +4,13 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import java.util.Collection;
+
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface UserMapper {
-    UserDto toUserDto(User model);
+    User toUser(UserDto model);
 
-    User toUser(UserDto dto);
+    UserDto toUserDto(User dto);
+
+    Collection<UserDto> toUserDtoCollection(Collection<User> users);
 }
