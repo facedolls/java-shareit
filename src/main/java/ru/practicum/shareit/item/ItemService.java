@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingItemService;
 import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -33,7 +33,7 @@ public class ItemService {
     private static final String LAST = "last";
     private final ItemRepository itemRepository;
     private final CommentService commentService;
-    private final BookingService bookingService;
+    private final BookingItemService bookingItemService;
     private final UserService userService;
     private final ItemMapper itemMapper;
     private final UserMapper userMapper;
@@ -148,8 +148,8 @@ public class ItemService {
     private Collection<ItemDtoInfo> setBookingsForOwner(List<Item> items, List<Long> itemsId,
                                                         Map<Long, List<CommentDto>> commentsItem) {
         LocalDateTime current = LocalDateTime.now();
-        List<Booking> nextBookings = bookingService.getNextBookingsForOwner(current, itemsId, APPROVED);
-        List<Booking> lastBookings = bookingService.getLastBookingsForOwner(current, itemsId, APPROVED);
+        List<Booking> nextBookings = bookingItemService.getNextBookingsForOwner(current, itemsId, APPROVED);
+        List<Booking> lastBookings = bookingItemService.getLastBookingsForOwner(current, itemsId, APPROVED);
         return getItemDtoInfoForOwner(items, nextBookings, lastBookings, commentsItem);
     }
 
@@ -212,7 +212,7 @@ public class ItemService {
     }
 
     private void isBookerOfThisItem(Long userId, Long itemId) {
-        boolean isValid = bookingService.isExistsByItemIdAndBookerIdAndStatusAndEndBefore(
+        boolean isValid = bookingItemService.isExistsByItemIdAndBookerIdAndStatusAndEndBefore(
                 itemId, userId, APPROVED, LocalDateTime.now());
         if (!isValid) {
             throw new ValidationException("Only users whose booking has expired can leave comments");
