@@ -19,29 +19,30 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Validated
 public class ItemController {
+    private static final String USER_ID = "X-Sharer-User-Id";
     private final ItemService itemService;
 
     @GetMapping("/{itemId}")
     public ItemDtoInfo getItemById(@PathVariable @Positive @NotNull Long itemId,
-                                   @RequestHeader("X-Sharer-User-Id") Long userId) {
+                                   @RequestHeader(USER_ID) Long userId) {
         return itemService.getItemDtoById(itemId, userId);
     }
 
     @GetMapping
-    public Collection<ItemDtoInfo> getAllItemUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<ItemDtoInfo> getAllItemUser(@RequestHeader(USER_ID) Long userId) {
         return itemService.getAllItemUser(userId);
     }
 
     @PostMapping
     public ItemDto createItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @RequestHeader(USER_ID) Long userId) {
         return itemService.createItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@Validated(Update.class) @RequestBody ItemDto itemDto,
                               @PathVariable @Positive @NotNull Long itemId,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @RequestHeader(USER_ID) Long userId) {
         return itemService.updateItem(userId, itemId, itemDto);
     }
 
@@ -52,7 +53,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@Valid @RequestBody CommentDto commentDto,
-                                    @RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @RequestHeader(USER_ID) Long userId,
                                     @PathVariable @Positive @NotNull Long itemId) {
         return itemService.createComment(commentDto, userId, itemId);
     }
