@@ -1,42 +1,49 @@
 package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
 
-import java.time.LocalDateTime;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
-@Slf4j
 @RestController
-@RequestMapping(path = "/requests")
+@RequestMapping("/requests")
 @RequiredArgsConstructor
 @Validated
 public class ItemRequestController {
-    private static final String USER_ID = "X-Sharer-User-Id";
     private final ItemRequestService itemRequestService;
 
-    @ResponseBody
     @PostMapping
-    public ItemRequestDto create(@RequestBody ItemRequestDto itemRequestDto, @RequestHeader(USER_ID) Long requesterId) {
-        log.info("Create request: {} with user id=", requesterId);
-        return itemRequestService.create(itemRequestDto, requesterId, LocalDateTime.now());
-    };
-
-    @GetMapping("/{requestId}")
-    public ItemRequestDto getItemRequestById(@PathVariable("request_id") Long itemRequestId, @RequestHeader(USER_ID) Long userId) {
-        return itemRequestService.getItemRequestById(itemRequestId, userId);
-    };
+    @ResponseStatus(HttpStatus.CREATED)
+    public ItemRequestDtoInfo createItemRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
+                                                @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
+        return itemRequestService.createItemRequest(itemRequestDto, userId);
+    }
 
     @GetMapping
-    public List<ItemRequestDto> getItems(@RequestHeader(USER_ID) Long userId) {
-        return itemRequestService.getOwnItemRequests(userId);
+    public List<ItemRequestDtoInfo> getListOfRequestsForItemsUser(@RequestHeader("X-Sharer-User-Id")
+                                                                  @Positive Long userId) {
+        return itemRequestService.getListOfRequestsForItemsUser(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllItemRequests(@RequestHeader(USER_ID) Long requesterId) {
-        return null;
+    public List<ItemRequestDtoInfo> getItemRequestsPageByPage(@RequestParam(defaultValue = "0", required = false)
+                                                              @Min(0) Integer from,
+                                                              @RequestParam(defaultValue = "10", required = false)
+                                                              @Min(1) Integer size,
+                                                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemRequestService.getItemRequestsPageByPage(from, size, userId);
+    }
+
+    @GetMapping("/{requestId}")
+    public ItemRequestDtoInfo getItemRequestById(@PathVariable @Positive Long requestId,
+                                                 @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
+        return itemRequestService.getItemRequestById(requestId, userId);
     }
 }

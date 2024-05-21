@@ -23,7 +23,7 @@ public class BookingController {
     @PostMapping
     public BookingDto createBooking(@Valid @RequestBody BookingDtoCreate bookingDtoCreate,
                                     @RequestHeader(USER_ID) Long userId) {
-        return bookingService.createBooking(userId, bookingDtoCreate);
+        return bookingService.createBooking(bookingDtoCreate, userId);
     }
 
     @PatchMapping("/{bookingId}")

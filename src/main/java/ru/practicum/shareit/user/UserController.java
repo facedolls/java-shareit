@@ -20,12 +20,12 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@PathVariable @Positive @NotNull Long userId) {
-        return userService.getUserDtoById(userId);
+        return userService.getUserById(userId);
     }
 
     @GetMapping
-    public Collection<UserDto> getAllUserDto() {
-        return userService.getAllUserDto();
+    public Collection<UserDto> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @PostMapping

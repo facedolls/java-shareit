@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class ItemDto {
     @Positive(groups = Update.class)
     private Long id;

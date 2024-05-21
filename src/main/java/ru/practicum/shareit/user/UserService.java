@@ -20,24 +20,18 @@ public class UserService {
     private final UserMapper userMapper;
 
     @Transactional(readOnly = true)
-    public UserDto getUserDtoById(Long userId) {
-        User user = getUserById(userId);
+    public UserDto getUserById(Long userId) {
+        User user = userRepository.findById(userId).stream().findFirst().orElseThrow(() -> {
+            log.warn("User with id={} not found", userId);
+            throw new NotFoundException("User with id=" + userId + " not found");
+        });
+
+        log.info("User was received by id={}", userId);
         return userMapper.toUserDto(user);
     }
 
     @Transactional(readOnly = true)
-    public User getUserById(Long userId) {
-        User user = userRepository.findById(userId).stream().findFirst().orElse(null);
-        if (user == null) {
-            log.warn("User with id={} not found", userId);
-            throw new NotFoundException("User with id=" + userId + " not found");
-        }
-        log.info("User was received by id={}", userId);
-        return user;
-    }
-
-    @Transactional(readOnly = true)
-    public Collection<UserDto> getAllUserDto() {
+    public Collection<UserDto> getAllUsers() {
         log.info("All users have been received");
         List<User> allUsers = userRepository.findAll();
         return userMapper.toUserDtoCollection(allUsers);

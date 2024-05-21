@@ -77,7 +77,7 @@ public class ItemService {
 
     @Transactional
     public ItemDto createItem(Long userId, ItemDto itemDto) {
-        User user = userMapper.toUser(userService.getUserDtoById(userId));
+        User user = userMapper.toUser(userService.getUserById(userId));
         Item item = itemRepository.save(itemMapper.toItem(itemDto, user));
         log.info("Item has been created={}", item);
         return itemMapper.toItemDto(item);
@@ -85,7 +85,7 @@ public class ItemService {
 
     @Transactional
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDtoNew) {
-        User user = userMapper.toUser(userService.getUserDtoById(userId));
+        User user = userMapper.toUser(userService.getUserById(userId));
         Item itemOld = itemRepository.findById(itemId).stream().findFirst().orElse(null);
         if (itemOld == null || !itemOld.getOwner().getId().equals(userId)) {
             log.warn("Item with this id={} not found", itemId);
@@ -108,15 +108,15 @@ public class ItemService {
     }
 
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
-        User user = userService.getUserById(userId);
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> {
+        var user = userMapper.toUser(userService.getUserById(userId));
+        var item = itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("A user={} wants to leave a review for an item id={} that doesn't exist", userId, itemId);
             throw new ValidationException("Item doesn't exist yet");
         });
         isBookerOfThisItem(userId, itemId);
         commentDto.setCreated(LocalDateTime.now());
 
-        Comment comment = commentMapper.toComment(commentDto, user, item);
+        var comment = commentMapper.toComment(commentDto, user, item);
         comment = commentService.saveComment(comment);
         log.info("Created comment id={} about item={} by user id={}", comment.getId(), itemId, userId);
         return commentMapper.toCommentDto(comment);
@@ -147,9 +147,9 @@ public class ItemService {
 
     private Collection<ItemDtoInfo> setBookingsForOwner(List<Item> items, List<Long> itemsId,
                                                         Map<Long, List<CommentDto>> commentsItem) {
-        LocalDateTime current = LocalDateTime.now();
-        List<Booking> nextBookings = bookingItemService.getNextBookingsForOwner(current, itemsId, APPROVED);
-        List<Booking> lastBookings = bookingItemService.getLastBookingsForOwner(current, itemsId, APPROVED);
+        var current = LocalDateTime.now();
+        var nextBookings = bookingItemService.getNextBookingsForOwner(current, itemsId, APPROVED);
+        var lastBookings = bookingItemService.getLastBookingsForOwner(current, itemsId, APPROVED);
         return getItemDtoInfoForOwner(items, nextBookings, lastBookings, commentsItem);
     }
 

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,6 +12,7 @@ import javax.validation.constraints.*;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class UserDto {
     @Positive(groups = Update.class)
     private Long id;

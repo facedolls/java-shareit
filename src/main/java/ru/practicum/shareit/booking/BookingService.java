@@ -7,9 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserService;
 
 import javax.validation.ValidationException;
@@ -26,11 +27,14 @@ public class BookingService {
     private final UserService userService;
     private final ItemService itemService;
     private final BookingMapper bookingMapper;
+    private final UserMapper userMapper;
+    private final ItemRepository itemRepository;
 
     @Transactional
-    public BookingDto createBooking(Long userId, BookingDtoCreate bookingDtoCreate) {
-        User booker = userService.getUserById(userId);
-        Item item = itemService.getItemByIdAvailable(bookingDtoCreate.getItemId(), userId);
+    public BookingDto createBooking(BookingDtoCreate bookingDtoCreate, Long userId) {
+        var booker = userMapper.toUser(userService.getUserById(userId));
+        var item = isItemByIdAvailable(bookingDtoCreate.getItemId(), userId);
+
         isBooker(userId, item);
         Booking booking = bookingRepository.save(bookingMapper.toBooking(bookingDtoCreate, booker, item));
         log.info("User id={} created booking id={} : {}", userId, booking.getId(), bookingDtoCreate);
@@ -39,11 +43,11 @@ public class BookingService {
 
     @Transactional
     public BookingDto updateBooking(Long userId, Long bookingId, Boolean approved) {
-        Booking bookingOld = isBookingExistAndNotWaiting(userId, bookingId);
-        BookingStatus status = approved ? APPROVED : REJECTED;
+        var bookingOld = isBookingExistAndNotWaiting(userId, bookingId);
+        var status = approved ? APPROVED : REJECTED;
         bookingOld.setStatus(status);
         isOwner(userId, bookingOld);
-        Booking bookingUpdated = bookingRepository.save(bookingOld);
+        var bookingUpdated = bookingRepository.save(bookingOld);
         log.info("Owner item updated status booking id={} to : {}", userId, status);
         return bookingMapper.toBookingDto(bookingUpdated);
     }
@@ -135,5 +139,18 @@ public class BookingService {
                         .findAllByBooker_IdAndStartBeforeAndEndAfterOrderByStartDesc(userId, current, current);
         }
         return bookingRepository.findAllByBooker_IdOrderByStartDesc(userId);
+    }
+
+    private Item isItemByIdAvailable(Long itemId, Long userId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> {
+            log.warn("Item with this id={} not found for user id={}", itemId, userId);
+            throw new NotFoundException("Item with this id=" + itemId + " not found");
+        });
+
+        if (item.getAvailable().equals(false)) {
+            log.warn("Item with id={} not found or not available", itemId);
+            throw new ValidationException("Item with this id=" + itemId + " not found or not available");
+        }
+        return item;
     }
 }
