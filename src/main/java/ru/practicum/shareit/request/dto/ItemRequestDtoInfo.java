@@ -10,6 +10,8 @@ import java.util.Collection;
 @Setter
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
+@Builder
 public class ItemRequestDtoInfo {
     private Long id;
     private String description;

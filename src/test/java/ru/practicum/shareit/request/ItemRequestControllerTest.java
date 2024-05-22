@@ -61,7 +61,7 @@ public class ItemRequestControllerTest {
                 ));
     }
 
-    @DisplayName("Should create query ")
+    @DisplayName("Should create a request")
     @Test
     @SneakyThrows
     public void shouldCreateItemRequest() {
@@ -133,7 +133,7 @@ public class ItemRequestControllerTest {
         verify(itemRequestService).getItemRequestsPageByPage(anyInt(), anyInt(), anyLong());
     }
 
-    @DisplayName("Should return the request by id")
+    @DisplayName("Should return request by id")
     @Test
     @SneakyThrows
     public void shouldGetItemRequestById() {

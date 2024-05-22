@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.validated.Create;
 import ru.practicum.shareit.validated.Update;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
@@ -24,8 +25,9 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<UserDto> getAllUsers() {
-        return userService.getAllUsers();
+    public Collection<UserDto> getAllUsers(@RequestParam(defaultValue = "0", required = false) @Min(0) Integer from,
+                                           @RequestParam(defaultValue = "10", required = false) @Min(1) Integer size) {
+        return userService.getAllUsers(from, size);
     }
 
     @PostMapping

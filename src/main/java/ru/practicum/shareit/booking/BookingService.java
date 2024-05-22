@@ -43,10 +43,10 @@ public class BookingService {
 
     @Transactional
     public BookingDto updateBooking(Long userId, Long bookingId, Boolean approved) {
-        var bookingOld = isBookingExistAndNotWaiting(userId, bookingId);
+        var bookingOld = getBookingNotWaitingIfItExists(userId, bookingId);
         var status = approved ? APPROVED : REJECTED;
         bookingOld.setStatus(status);
-        isOwner(userId, bookingOld);
+        getExceptionIfUserIsNotOwner(userId, bookingOld);
         var bookingUpdated = bookingRepository.save(bookingOld);
         log.info("Owner item updated status booking id={} to : {}", userId, status);
         return bookingMapper.toBookingDto(bookingUpdated);
@@ -78,7 +78,7 @@ public class BookingService {
         return bookingMapper.toBookingDto(allBookings);
     }
 
-    private Booking isBookingExistAndNotWaiting(Long userId, Long bookingId) {
+    private Booking getBookingNotWaitingIfItExists(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> {
             log.warn("Booking id={} user id={} not found", bookingId, userId);
             return new NotFoundException("Booking with id=" + bookingId + " not found");
@@ -91,7 +91,7 @@ public class BookingService {
         return booking;
     }
 
-    private void isOwner(Long userId, Booking booking) {
+    private void getExceptionIfUserIsNotOwner(Long userId, Booking booking) {
         if (!booking.getItem().getOwner().getId().equals(userId)) {
             log.warn("User id={} for booking id={} is not owner", userId, booking.getId());
             throw new NotFoundException("Booking id=" + booking.getId() + " not found");

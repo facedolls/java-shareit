@@ -90,7 +90,7 @@ public class ItemRequestServiceTest {
         assertThat(result, is(contains(not(requestDtoCreatedOne))));
     }
 
-    @DisplayName("Should return the request by id")
+    @DisplayName("Should return request by id")
     @Test
     public void shouldGetItemRequestById() {
         UserDto userDtoOne = userService.createUser(userDtoOneCreate);

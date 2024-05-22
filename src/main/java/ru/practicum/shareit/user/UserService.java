@@ -2,6 +2,9 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ConflictException;
@@ -31,9 +34,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Collection<UserDto> getAllUsers() {
+    public Collection<UserDto> getAllUsers(Integer from, Integer size) {
         log.info("All users have been received");
-        List<User> allUsers = userRepository.findAll();
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Order.asc("id")));
+        List<User> allUsers = userRepository.findAll(pageable).getContent();
         return userMapper.toUserDtoCollection(allUsers);
     }
 
