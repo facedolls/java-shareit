@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 @EqualsAndHashCode
 public class ItemRequestDto {
     @NotBlank

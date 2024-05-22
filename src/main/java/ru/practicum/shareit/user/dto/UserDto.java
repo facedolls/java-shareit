@@ -8,9 +8,9 @@ import javax.validation.constraints.*;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @EqualsAndHashCode
 public class UserDto {
     @Positive(groups = Update.class)

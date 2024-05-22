@@ -11,8 +11,10 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@Builder
 @EqualsAndHashCode
 public class ItemDto {
     @Positive(groups = Update.class)

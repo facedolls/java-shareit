@@ -1,16 +1,15 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 
 import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @ToString
+@Builder
 @EqualsAndHashCode
 public class ItemDtoInfo {
     private Long id;

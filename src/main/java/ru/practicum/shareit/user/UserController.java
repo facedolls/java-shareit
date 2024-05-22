@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -25,12 +26,13 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<UserDto> getAllUsers(@RequestParam(defaultValue = "0", required = false) @Min(0) Integer from,
-                                           @RequestParam(defaultValue = "10", required = false) @Min(1) Integer size) {
+    public Collection<UserDto> getAllUser(@RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                          @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return userService.getAllUsers(from, size);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }

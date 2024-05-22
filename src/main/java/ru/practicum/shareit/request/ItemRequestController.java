@@ -17,33 +17,31 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class ItemRequestController {
+    public static final String USER_ID = "X-Sharer-User-Id";
     private final ItemRequestService itemRequestService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemRequestDtoInfo createItemRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
-                                                @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
+                                                @RequestHeader(USER_ID) @Positive Long userId) {
         return itemRequestService.createItemRequest(itemRequestDto, userId);
     }
 
     @GetMapping
-    public List<ItemRequestDtoInfo> getListOfRequestsForItemsUser(@RequestHeader("X-Sharer-User-Id")
-                                                                  @Positive Long userId) {
+    public List<ItemRequestDtoInfo> getListOfRequestsForItemsUser(@RequestHeader(USER_ID) @Positive Long userId) {
         return itemRequestService.getListOfRequestsForItemsUser(userId);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDtoInfo> getItemRequestsPageByPage(@RequestParam(defaultValue = "0", required = false)
-                                                              @Min(0) Integer from,
-                                                              @RequestParam(defaultValue = "10", required = false)
-                                                              @Min(1) Integer size,
-                                                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemRequestDtoInfo> getItemRequestsPageByPage(@RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                              @RequestParam(defaultValue = "10") @Min(1) Integer size,
+                                                              @RequestHeader(USER_ID) Long userId) {
         return itemRequestService.getItemRequestsPageByPage(from, size, userId);
     }
 
     @GetMapping("/{requestId}")
     public ItemRequestDtoInfo getItemRequestById(@PathVariable @Positive Long requestId,
-                                                 @RequestHeader("X-Sharer-User-Id") @Positive Long userId) {
+                                                 @RequestHeader(USER_ID) @Positive Long userId) {
         return itemRequestService.getItemRequestById(requestId, userId);
     }
 }

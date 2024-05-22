@@ -1,24 +1,18 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exception.ConflictException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.user.dto.UserDto;
-
 import javax.validation.ValidationException;
 import java.util.Collection;
 import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -37,9 +31,9 @@ public class UserServiceTest {
     public void setUp() {
         userDtoOneCreate = new UserDto(null, "John", "john@ya.ru");
         userDtoTwoCreate = new UserDto(null, "Amy", "amy@ya.ru");
-        userDtoOne = new UserDto(1L, "John", "john@ya.ru");
+        userDtoOne = new UserDto(null, "John", "john@ya.ru");
         userDtoCreateDuplicateEmail = new UserDto(null, "Crystal", "john@ya.ru");
-        userDtoOneUpdate = new UserDto(1L, "John Doe", "johndoe@ya.ru");
+        userDtoOneUpdate = new UserDto(null, "John Doe", "johnDoe@ya.ru");
         userDtoOneUpdateDuplicateEmail = new UserDto(1L, "John Doe", "amy@ya.ru");
     }
 
@@ -79,6 +73,7 @@ public class UserServiceTest {
     @Test
     public void shouldCreateUser() {
         UserDto userDtoCreated = userService.createUser(userDtoOneCreate);
+        userDtoOne.setId(userDtoCreated.getId());
 
         assertThat(userDtoCreated, is(equalTo(userDtoOne)));
     }
@@ -87,6 +82,7 @@ public class UserServiceTest {
     @Test
     public void shouldNotCreateUser() {
         UserDto userDtoCreated = userService.createUser(userDtoOneCreate);
+        userDtoOne.setId(userDtoCreated.getId());
 
         assertThat(userDtoCreated, is(equalTo(userDtoOne)));
 
@@ -95,8 +91,8 @@ public class UserServiceTest {
                 () -> userService.createUser(userDtoCreateDuplicateEmail)
         );
 
-        assertEquals("User with email: " + userDtoCreateDuplicateEmail.getEmail()
-                + " exists", exception.getMessage());
+        assertEquals("Email " + userDtoCreateDuplicateEmail.getEmail() + " already exists",
+                exception.getMessage());
     }
 
     @DisplayName("Should update user")
@@ -104,6 +100,7 @@ public class UserServiceTest {
     public void shouldUpdateUser() {
         UserDto userDtoCreated = userService.createUser(userDtoOneCreate);
         UserDto userDtoUpdated = userService.updateUser(userDtoCreated.getId(), userDtoOneUpdate);
+        userDtoOneUpdate.setId(userDtoCreated.getId());
 
         assertThat(userDtoUpdated, is(equalTo(userDtoOneUpdate)));
     }
@@ -130,7 +127,7 @@ public class UserServiceTest {
                 ConflictException.class,
                 () -> userService.updateUser(userOne.getId(), userDtoOneUpdateDuplicateEmail)
         );
-        assertEquals("User with email: " + userDtoOneUpdateDuplicateEmail.getEmail()
+        assertEquals("User with email=" + userDtoOneUpdateDuplicateEmail.getEmail()
                 + " exists", exception.getMessage());
     }
 
