@@ -11,9 +11,11 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -26,8 +28,8 @@ import static ru.practicum.shareit.booking.BookingStatus.*;
 @Slf4j
 public class BookingService {
     private final BookingRepository bookingRepository;
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
+    private final ItemService itemService;
+    private final UserService userService;
     private final BookingMapper bookingMapper;
 
     @Transactional
@@ -84,17 +86,11 @@ public class BookingService {
     }
 
     private User getUserIfTheExists(Long userId) {
-        return userRepository.findById(userId).stream().findFirst().orElseThrow(() -> {
-            log.warn("User with id={} not found", userId);
-            throw new NotFoundException("User with id=" + userId + " not found");
-        });
+        return userService.findById(userId);
     }
 
     private Item getAvailableItemByIdIfItExists(Long itemId, Long userId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> {
-            log.warn("Item with this id={} not found for user id={}", itemId, userId);
-            throw new NotFoundException("Item with this id=" + itemId + " not found");
-        });
+        Item item = itemService.findById(itemId);
 
         if (item.getAvailable().equals(false)) {
             log.warn("Item with id={} not found or not available", itemId);

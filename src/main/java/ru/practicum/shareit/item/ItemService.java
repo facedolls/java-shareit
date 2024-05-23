@@ -115,6 +115,14 @@ public class ItemService {
         return itemMapper.toItemDtoCollection(items);
     }
 
+    public Item findById(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> {
+            log.warn("Item with this id={} not found for user", itemId);
+            throw new NotFoundException("Item with this id=" + itemId + " not found");
+        });
+        return item;
+    }
+
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
         User user = getUserIfTheExists(userId);
         Item item = itemRepository.findById(itemId).orElseThrow(() -> {

@@ -78,6 +78,13 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    public User findById(Long userId) {
+        return userRepository.findById(userId).stream().findFirst().orElseThrow(() -> {
+            log.warn("User with id={} not found", userId);
+            throw new NotFoundException("User with id=" + userId + " not found");
+        });
+    }
+
     private void getExceptionIfEmailExistsAndItIsAlien(String emailNew, String emailOld) {
         if (emailNew == null) {
             return;
