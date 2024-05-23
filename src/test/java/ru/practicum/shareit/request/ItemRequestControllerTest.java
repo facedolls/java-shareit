@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ItemRequestController.class)
 public class ItemRequestControllerTest {
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    public static final String HEADER_USER = "X-Sharer-User-Id";
+    private static final String USER_ID = "X-Sharer-User-Id";
     public static final LocalDateTime TIME_NOW = LocalDateTime.now();
 
     @Autowired
@@ -74,7 +74,7 @@ public class ItemRequestControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .header(HEADER_USER, 1L))
+                        .header(USER_ID, 1L))
                 .andExpect(jsonPath("$.id").value(request.getId()))
                 .andExpect(jsonPath("$.description").value(request.getDescription()))
                 .andExpect(jsonPath("$.created").value(request.getCreated().format(DATE_FORMAT)))
@@ -100,7 +100,7 @@ public class ItemRequestControllerTest {
         when(itemRequestService.getListOfRequestsForItemsUser(anyLong())).thenReturn(request);
 
         mvc.perform(get("/requests")
-                        .header(HEADER_USER, 1L))
+                        .header(USER_ID, 1L))
                 .andExpect(jsonPath("$[0].id").value(request.get(0).getId()))
                 .andExpect(jsonPath("$[0].description").value(request.get(0).getDescription()))
                 .andExpect(jsonPath("$[0].created").value(request.get(0).getCreated().format(DATE_FORMAT)))
@@ -119,7 +119,7 @@ public class ItemRequestControllerTest {
         when(itemRequestService.getItemRequestsPageByPage(anyInt(), anyInt(), anyLong())).thenReturn(requests);
 
         mvc.perform(get("/requests/all")
-                        .header(HEADER_USER, 1L))
+                        .header(USER_ID, 1L))
                 .andExpect(jsonPath("$[0].id").value(requests.get(0).getId()))
                 .andExpect(jsonPath("$[0].description").value(requests.get(0).getDescription()))
                 .andExpect(jsonPath("$[0].created").value(requests.get(0).getCreated().format(DATE_FORMAT)))
@@ -142,7 +142,7 @@ public class ItemRequestControllerTest {
         when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(itemRequestDtoInfo);
 
         mvc.perform(get("/requests/{requestId}", 1L)
-                        .header(HEADER_USER, 1L))
+                        .header(USER_ID, 1L))
                 .andExpect(jsonPath("$.id").value(request.getId()))
                 .andExpect(jsonPath("$.description").value(request.getDescription()))
                 .andExpect(jsonPath("$.created").value(request.getCreated().format(DATE_FORMAT)))

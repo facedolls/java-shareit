@@ -1,23 +1,43 @@
 package ru.practicum.shareit.request;
 
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
-public interface ItemRequestMapper {
+@Component
+@RequiredArgsConstructor
+public class ItemRequestMapper {
+    private final ItemMapper itemMapper;
 
-    @Mapping(target = "items", ignore = true)
-    @Mapping(target = "requester", source = "requester")
-    ItemRequest toItemRequest(ItemRequestDto itemRequestDto, User requester, LocalDateTime created);
+    public ItemRequest toItemRequest(ItemRequestDto itemRequestDto, User requester, LocalDateTime created) {
+        return ItemRequest.builder()
+                .description(itemRequestDto.getDescription())
+                .requester(requester)
+                .created(created)
+                .build();
+    }
 
-    List<ItemRequestDtoInfo> toItemRequestDtoInfoList(List<ItemRequest> allRequestsUser);
+    public List<ItemRequestDtoInfo> toItemRequestDtoInfoList(List<ItemRequest> allRequestsUser) {
+        return allRequestsUser.stream()
+                .map(this::toItemRequestDtoInfo)
+                .collect(Collectors.toList());
+    }
 
-    ItemRequestDtoInfo toItemRequestDtoInfo(ItemRequest itemRequest);
+    public ItemRequestDtoInfo toItemRequestDtoInfo(ItemRequest itemRequest) {
+        return ItemRequestDtoInfo.builder()
+                .id(itemRequest.getId())
+                .description(itemRequest.getDescription())
+                .created(itemRequest.getCreated())
+                .items(itemRequest.getItems() == null ?
+                        new ArrayList<>() : itemMapper.toItemDtoCollection(itemRequest.getItems()))
+                .build();
+    }
 }

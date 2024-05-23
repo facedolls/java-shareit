@@ -8,8 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingItemService;
 import ru.practicum.shareit.booking.BookingMapper;
-import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -18,9 +18,9 @@ import ru.practicum.shareit.item.dto.ItemDtoInfo;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -36,10 +36,10 @@ public class ItemService {
     public static final String NEXT = "next";
     public static final String LAST = "last";
     private final ItemRepository itemRepository;
-    private final CommentRepository commentRepository;
-    private final BookingRepository bookingRepository;
-    private final ItemRequestRepository itemRequestRepository;
-    private final UserRepository userRepository;
+    private final CommentService commentService;
+    private final BookingItemService bookingItemService;
+    private final ItemRequestService itemRequestService;
+    private final UserService userService;
     private final ItemMapper itemMapper;
     private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
@@ -47,7 +47,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemDtoInfo getItemDtoById(Long itemId, Long userId) {
         Item item = getItemById(itemId, userId);
-        List<Comment> comments = commentRepository.findAllByItem_Id(itemId).orElse(new ArrayList<>());
+        List<Comment> comments = commentService.getAllByItem_Id(itemId);
         Map<Long, List<CommentDto>> commentsItem = getCommentDtoSortByIdItem(comments);
 
         boolean isOwner = itemRepository.existsByIdAndOwner_Id(itemId, userId);
@@ -66,7 +66,7 @@ public class ItemService {
         List<Item> items = itemRepository.findAllByOwnerId(userId, pageable);
         List<Long> itemsId = items.stream().map(Item::getId).collect(Collectors.toList());
 
-        List<Comment> comments = commentRepository.findAllByItem_IdIn(itemsId).orElse(new ArrayList<>());
+        List<Comment> comments = commentService.getCommentsByItemIdIn(itemsId);
         Map<Long, List<CommentDto>> commentsItems = getCommentDtoSortByIdItem(comments);
 
         log.info("All items have been received");
@@ -76,12 +76,8 @@ public class ItemService {
     @Transactional
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         User user = getUserIfTheExists(userId);
-        ItemRequest itemRequest = itemDto.getRequestId() == null ? null :
-                itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() -> {
-                    log.warn("Request id={} not found", itemDto.getRequestId());
-                    throw new NotFoundException("Request id=" + itemDto.getRequestId() + " not found");
-                });
-
+        Long requestId = itemDto.getRequestId();
+        ItemRequest itemRequest = requestId == null ? null : itemRequestService.findById(requestId);
         Item item = itemRepository.save(itemMapper.toItem(itemDto, user, itemRequest));
         log.info("Item has been created={}", item);
         return itemMapper.toItemDto(item);
@@ -133,7 +129,7 @@ public class ItemService {
         commentDto.setCreated(LocalDateTime.now());
 
         Comment comment = commentMapper.toComment(commentDto, user, item);
-        Comment commentSaved = commentRepository.save(comment);
+        Comment commentSaved = commentService.saveComment(comment);
         log.info("Created comment id={} about item={} by user id={}", commentSaved.getId(), itemId, userId);
         return commentMapper.toCommentDto(commentSaved);
     }
@@ -164,8 +160,8 @@ public class ItemService {
     private Collection<ItemDtoInfo> setBookingsForOwner(List<Item> items, List<Long> itemsId,
                                                         Map<Long, List<CommentDto>> commentsItem) {
         LocalDateTime current = LocalDateTime.now();
-        List<Booking> nextBookings = bookingRepository.findNextBookingsForOwner(current, itemsId, APPROVED);
-        List<Booking> lastBookings = bookingRepository.findLastBookingsForOwner(current, itemsId, APPROVED);
+        List<Booking> nextBookings = bookingItemService.getNextBookingsForOwner(current, itemsId, APPROVED);
+        List<Booking> lastBookings = bookingItemService.getLastBookingsForOwner(current, itemsId, APPROVED);
         return getItemDtoInfoForOwner(items, nextBookings, lastBookings, commentsItem);
     }
 
@@ -228,14 +224,11 @@ public class ItemService {
     }
 
     private User getUserIfTheExists(Long userId) {
-        return userRepository.findById(userId).stream().findFirst().orElseThrow(() -> {
-            log.warn("User with id={} not found", userId);
-            throw new NotFoundException("User with id=" + userId + " not found");
-        });
+        return userService.findById(userId);
     }
 
     private void getExceptionIfIsNotBookerOfThisItem(Long userId, Long itemId) {
-        boolean isValid = bookingRepository.existsByItemIdAndBookerIdAndStatusAndEndBefore(
+        boolean isValid = bookingItemService.isExistsByItemIdAndBookerIdAndStatusAndEndBefore(
                 itemId, userId, APPROVED, LocalDateTime.now());
         if (!isValid) {
             throw new ValidationException("Only users whose booking has expired can leave comments");

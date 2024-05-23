@@ -21,7 +21,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Validated
 public class ItemController {
-    public static final String USER_ID = "X-Sharer-User-Id";
+    private static final String USER_ID = "X-Sharer-User-Id";
     private final ItemService itemService;
 
     @GetMapping("/{itemId}")

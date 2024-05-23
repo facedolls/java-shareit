@@ -10,7 +10,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ItemRequestMapper itemRequestMapper;
 
     public ItemRequestDtoInfo createItemRequest(ItemRequestDto itemRequestDto, Long userId) {
@@ -60,10 +60,14 @@ public class ItemRequestService {
         return itemRequestMapper.toItemRequestDtoInfo(itemRequest);
     }
 
-    private User getUserIfTheExists(Long userId) {
-        return userRepository.findById(userId).stream().findFirst().orElseThrow(() -> {
-            log.warn("User with id={} not found", userId);
-            throw new NotFoundException("User with id=" + userId + " not found");
+    public ItemRequest findById(Long requestId) {
+        return itemRequestRepository.findById(requestId).orElseThrow(() -> {
+            log.warn("Request id={} not found", requestId);
+            throw new NotFoundException("Request id=" + requestId + " not found");
         });
+    }
+
+    private User getUserIfTheExists(Long userId) {
+        return userService.findById(userId);
     }
 }

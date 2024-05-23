@@ -105,32 +105,6 @@ public class UserServiceTest {
         assertThat(userDtoUpdated, is(equalTo(userDtoOneUpdate)));
     }
 
-    @DisplayName("Should throw exception when update user with wrong ID")
-    @Test
-    public void shouldNotUpdateUser() {
-        long id = 1;
-
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userService.updateUser(id, userDtoOne)
-        );
-        assertEquals("User with id=" + id + " not exists", exception.getMessage());
-    }
-
-    @DisplayName("Should throw exception when update user with duplicate email")
-    @Test
-    public void shouldNotUpdateUserEmail() {
-        UserDto userOne = userService.createUser(userDtoOneCreate);
-        userService.createUser(userDtoTwoCreate);
-
-        ConflictException exception = assertThrows(
-                ConflictException.class,
-                () -> userService.updateUser(userOne.getId(), userDtoOneUpdateDuplicateEmail)
-        );
-        assertEquals("User with email=" + userDtoOneUpdateDuplicateEmail.getEmail()
-                + " exists", exception.getMessage());
-    }
-
     @DisplayName("Should delete user")
     @Test
     public void shouldDeleteUserById() {

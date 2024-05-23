@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class ItemRequestController {
-    public static final String USER_ID = "X-Sharer-User-Id";
+    private static final String USER_ID = "X-Sharer-User-Id";
     private final ItemRequestService itemRequestService;
 
     @PostMapping
