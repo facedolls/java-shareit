@@ -47,11 +47,11 @@ public class ItemRequestControllerTest {
 
     @BeforeEach
     public void setUp() {
-        ItemDto itemDto = new ItemDto(1L, "Rotor hammer", "Rotary hammer for concrete", true, null);
+        ItemDto itemDto = new ItemDto(1L, "Rotor hammer", "rotary hammer for concrete", true, null);
         ItemDto itemDtoTwo = new ItemDto(2L, "Vacuum cleaner", "industrial vacuum cleaner", true, null);
-        itemRequestDtoInfo = new ItemRequestDtoInfo(1L, "need a saw", TIME_NOW,
+        itemRequestDtoInfo = new ItemRequestDtoInfo(1L, "need rotor hammer", TIME_NOW,
                 Collections.singleton(itemDto));
-        itemRequestDtoInfoTwo = new ItemRequestDtoInfo(2L, "looking for angle grinder", TIME_NOW,
+        itemRequestDtoInfoTwo = new ItemRequestDtoInfo(2L, "looking for vacuum cleaner", TIME_NOW,
                 Collections.emptyList());
         itemRequestDtoCreateOne = new ItemRequestDto("looking for rotor hammer");
         itemRequestDtoInfoList = List.of(

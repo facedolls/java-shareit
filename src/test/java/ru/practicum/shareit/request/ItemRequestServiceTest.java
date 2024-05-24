@@ -37,8 +37,8 @@ public class ItemRequestServiceTest {
     public void setUp() {
         userDtoOneCreate = new UserDto(null, "John", "john@ya.ru");
         userDtoTwoCreate = new UserDto(null, "Amy", "amy@ya.ru");
-        itemRequestDtoCreateOne = new ItemRequestDto("need a saw");
-        itemRequestDtoCreateTwo = new ItemRequestDto("need a rake");
+        itemRequestDtoCreateOne = new ItemRequestDto("need rotor hammer");
+        itemRequestDtoCreateTwo = new ItemRequestDto("need vacuum cleaner");
     }
 
     @DisplayName("Should create a request")
