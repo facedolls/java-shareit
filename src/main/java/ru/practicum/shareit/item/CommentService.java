@@ -15,11 +15,11 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     public List<Comment> getAllByItem_Id(Long itemId) {
-        return commentRepository.findAllByItem_Id(itemId).orElse(new ArrayList<>());
+        return commentRepository.findAllByItem_Id(itemId);
     }
 
     public List<Comment> getCommentsByItemIdIn(List<Long> itemsId) {
-        return commentRepository.findAllByItem_IdIn(itemsId).orElse(new ArrayList<>());
+        return commentRepository.findAllByItem_IdIn(itemsId);
     }
 
     public Comment saveComment(Comment comment) {

@@ -11,6 +11,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Builder
 @EqualsAndHashCode
 public class UserDto {
     @Positive(groups = Update.class)
