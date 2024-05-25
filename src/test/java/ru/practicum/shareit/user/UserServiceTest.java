@@ -11,6 +11,7 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.validation.ValidationException;
 import java.util.Collection;
 import java.util.List;
 
@@ -108,6 +109,32 @@ public class UserServiceTest {
         userDtoOneUpdate.setId(userDtoCreated.getId());
 
         assertThat(userDtoUpdated, is(equalTo(userDtoOneUpdate)));
+    }
+
+    @DisplayName("Should not update user")
+    @Test
+    public void shouldNotUpdateUser() {
+        long id = 1;
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> userService.updateUser(id, userDtoOne)
+        );
+        assertEquals("User with this id=" + id + " not already exists", exception.getMessage());
+    }
+
+    @DisplayName("Should not update user with duplicate email")
+    @Test
+    public void shouldNotUpdateUserEmail() {
+        UserDto userOne = userService.createUser(userDtoOneCreate);
+        userService.createUser(userDtoTwoCreate);
+
+        ConflictException exception = assertThrows(
+                ConflictException.class,
+                () -> userService.updateUser(userOne.getId(), userDtoOneUpdateDuplicateEmail)
+        );
+        assertEquals("User with this email=" + userDtoOneUpdateDuplicateEmail.getEmail()
+                + " already exists", exception.getMessage());
     }
 
     @DisplayName("Should delete user")

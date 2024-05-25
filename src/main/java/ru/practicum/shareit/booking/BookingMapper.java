@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.Generated;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+@Generated
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         uses = {ItemMapper.class, UserMapper.class})
 public interface BookingMapper {

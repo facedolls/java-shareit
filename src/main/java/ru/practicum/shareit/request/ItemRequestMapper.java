@@ -7,11 +7,13 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
 import ru.practicum.shareit.user.User;
 
+import javax.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Generated("org.mapstruct")
 @Component
 @RequiredArgsConstructor
 public class ItemRequestMapper {

@@ -1,0 +1,20 @@
+{
+  "name": "Angle grinder",
+  "description": "grinding-wheel",
+  "available": "true",
+  "lastBooking": {
+    "bookerId": "1",
+    "start": "2020-01-01T01:01:01",
+    "end": "2020-01-04T01:01:01",
+    "status": "WAITING",
+    "itemId": "1"
+  },
+  "comments": [
+    {
+      "text": "good",
+      "authorName": "Paul",
+      "created": "2020-01-01T01:01:01",
+      "itemId": "1"
+    }
+  ]
+}

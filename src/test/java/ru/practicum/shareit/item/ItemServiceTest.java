@@ -96,6 +96,19 @@ public class ItemServiceTest {
         assertThat(itemDtoResult.getName(), is(equalTo(itemDtoOne.getName())));
     }
 
+    @DisplayName("Should not get item by ID")
+    @Test
+    public void shouldNotGetItemDtoById() {
+        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
+        long itemId = 10L;
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> itemService.getItemDtoById(itemId, userDtoOne.getId())
+        );
+        assertEquals("Item with this id=" + itemId + " not found", exception.getMessage());
+    }
+
     @DisplayName("Should get item not owner")
     @Test
     public void shouldGetItemDtoByIdNotOwner() {
@@ -196,6 +209,20 @@ public class ItemServiceTest {
         assertThat(itemDtoOneUpdated, is(equalTo(itemDtoUpdate)));
     }
 
+    @DisplayName("Should not update item")
+    @Test
+    public void shouldNotUpdateItem() {
+        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
+        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
+        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> itemService.updateItem(itemDtoUpdate, itemDtoOne.getId(), userDtoTwo.getId())
+        );
+        assertEquals("Item with this id=" + itemDtoOne.getId() + " not found", exception.getMessage());
+    }
+
     @DisplayName("Should find items by name or descr.")
     @Test
     public void shouldSearchItems() {
@@ -247,5 +274,23 @@ public class ItemServiceTest {
                 () -> itemService.createComment(commentDtoCreate, userDtoTwo.getId(), itemDtoOne.getId())
         );
         assertEquals("Only users whose booking has expired can leave comments", exception.getMessage());
+    }
+
+    @DisplayName("Should not create comment if item not exist")
+    @Test
+    public void shouldNotCreateCommentOnItemNotExist() {
+        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
+        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
+        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
+
+        bookingDtoTwoCreate.setItemId(itemDtoOne.getId());
+        BookingDto bookingDtoCreated = bookingService.createBooking(bookingDtoTwoCreate, userDtoTwo.getId());
+        bookingService.updateBooking(userDtoOne.getId(), bookingDtoCreated.getId(), true);
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> itemService.createComment(commentDtoCreate, userDtoTwo.getId(), 54321L)
+        );
+        assertEquals("Item doesn't exist yet", exception.getMessage());
     }
 }
