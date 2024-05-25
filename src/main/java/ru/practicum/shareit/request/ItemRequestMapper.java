@@ -1,7 +1,8 @@
 package ru.practicum.shareit.request;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
@@ -9,37 +10,22 @@ import ru.practicum.shareit.user.User;
 
 import javax.annotation.Generated;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+@lombok.Generated
 @Generated("org.mapstruct")
-@Component
-@RequiredArgsConstructor
-public class ItemRequestMapper {
-    private final ItemMapper itemMapper;
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        uses = {ItemMapper.class})
+public interface ItemRequestMapper {
 
-    public ItemRequest toItemRequest(ItemRequestDto itemRequestDto, User requester, LocalDateTime created) {
-        return ItemRequest.builder()
-                .description(itemRequestDto.getDescription())
-                .requester(requester)
-                .created(created)
-                .build();
-    }
+    @Mapping(target = "description", source = "itemRequestDto.description")
+    @Mapping(target = "items", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "requester", source = "requester")
+    @Mapping(target = "created", source = "created")
+    ItemRequest toItemRequest(ItemRequestDto itemRequestDto, User requester, LocalDateTime created);
 
-    public List<ItemRequestDtoInfo> toItemRequestDtoInfoList(List<ItemRequest> allRequestsUser) {
-        return allRequestsUser.stream()
-                .map(this::toItemRequestDtoInfo)
-                .collect(Collectors.toList());
-    }
+    List<ItemRequestDtoInfo> toItemRequestDtoInfoList(List<ItemRequest> allRequestsUser);
 
-    public ItemRequestDtoInfo toItemRequestDtoInfo(ItemRequest itemRequest) {
-        return ItemRequestDtoInfo.builder()
-                .id(itemRequest.getId())
-                .description(itemRequest.getDescription())
-                .created(itemRequest.getCreated())
-                .items(itemRequest.getItems() == null ?
-                        new ArrayList<>() : itemMapper.toItemDtoCollection(itemRequest.getItems()))
-                .build();
-    }
+    ItemRequestDtoInfo toItemRequestDtoInfo(ItemRequest itemRequest);
 }
