@@ -70,6 +70,51 @@ public class BookingServiceTest {
         assertThat(bookingDtoCreated.getStatus(), is(equalTo(BookingStatus.WAITING)));
     }
 
+    @DisplayName("Shouln't create booking when item not exists")
+    @Test
+    public void shouldNotCreateBookingIfItemNotExists() {
+        userService.createUser(userDtoOneCreate);
+        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
+        bookingDtoCreate.setItemId(2002L);
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> bookingService.createBooking(bookingDtoCreate, userDtoTwo.getId())
+        );
+        assertEquals("Item with this id=" + bookingDtoCreate.getItemId() + " not found",
+                exception.getMessage());
+    }
+
+    @DisplayName("Shouldn't create booking when item not available")
+    @Test
+    public void shouldNotCreateBookingIfTheItemIsNotAvailable() {
+        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
+        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
+        ItemDto itemDto = itemService.createItem(itemDtoCreate, userDtoOne.getId());
+        bookingDtoCreate.setItemId(itemDto.getId());
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> bookingService.createBooking(bookingDtoCreate, userDtoTwo.getId())
+        );
+        assertEquals("Item with this id=" + bookingDtoCreate.getItemId()
+                + " not found or not available", exception.getMessage());
+    }
+
+    @DisplayName("Shouldn't create booking when booker and owner same")
+    @Test
+    public void shouldNotCreateBookingIfBookerEqualsOwner() {
+        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
+        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
+        bookingDtoCreate.setItemId(itemDtoOne.getId());
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> bookingService.createBooking(bookingDtoCreate, userDtoOne.getId())
+        );
+        assertEquals("Owner cannot booking his item", exception.getMessage());
+    }
+
     @DisplayName("Should update booking")
     @Test
     public void shouldUpdateBooking() {
@@ -156,6 +201,19 @@ public class BookingServiceTest {
         BookingDto result = bookingService.getOneBookingUser(bookingDtoCreated.getId(), userDtoTwo.getId());
 
         assertThat(result).isEqualTo(bookingDtoCreated);
+    }
+
+    @DisplayName("Should get exception when booking not exist")
+    @Test
+    public void shouldReturnExceptionIfTheBookingDoesNotExist() {
+        long bookingId = 500L;
+        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
+
+        NotFoundException exception = assertThrows(
+                NotFoundException.class,
+                () -> bookingService.getOneBookingUser(bookingId, userDtoTwo.getId())
+        );
+        assertEquals("Booking with this id=" + bookingId + " not found", exception.getMessage());
     }
 
     @DisplayName("Should get all user bookings")

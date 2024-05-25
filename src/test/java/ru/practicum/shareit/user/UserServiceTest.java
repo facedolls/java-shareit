@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -20,12 +19,12 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(properties = "spring.datasource.url=jdbc:h2:mem:test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class UserServiceTest {
     private final UserService userService;
+    private final UserRepository userRepository;
     private UserDto userDtoOneCreate;
     private UserDto userDtoTwoCreate;
     private UserDto userDtoOne;
@@ -35,6 +34,7 @@ public class UserServiceTest {
 
     @BeforeEach
     public void setUp() {
+        userRepository.deleteAll();
         userDtoOneCreate = new UserDto(null, "John", "john@ya.ru");
         userDtoTwoCreate = new UserDto(null, "Amy", "amy@ya.ru");
         userDtoOne = new UserDto(null, "John", "john@ya.ru");
