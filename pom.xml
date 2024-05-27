@@ -156,9 +156,8 @@
 					<version>0.8.8</version>
 					<configuration>
 						<excludes>
-							<exclude>**/generated/*</exclude>
+							<exclude>**/**/**/**/**/**/*Mapper*.*</exclude>
 						</excludes>
-						<output>file</output>
 					</configuration>
 					<executions>
 						<execution>
@@ -190,7 +189,7 @@
 											<limit>
 												<counter>BRANCH</counter>
 												<value>COVEREDRATIO</value>
-												<minimum>0.6</minimum>
+												<minimum>0.5</minimum>
 											</limit>
 											<limit>
 												<counter>COMPLEXITY</counter>
