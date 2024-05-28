@@ -1,12 +1,12 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingService;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
@@ -20,7 +20,9 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.sql.DataSource;
 import javax.validation.ValidationException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,7 +34,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(properties = "spring.datasource.url=jdbc:h2:mem:test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -43,6 +44,7 @@ public class ItemServiceTest {
     private final ItemService itemService;
     private final UserService userService;
     private final BookingService bookingService;
+    private final DataSource dataSource;
     private final ItemRequestService itemRequestService;
     private UserDto userDtoOneCreate;
     private UserDto userDtoTwoCreate;
@@ -55,6 +57,7 @@ public class ItemServiceTest {
     private CommentDto commentDtoCreate;
     private BookingDtoCreate bookingDtoTwoCreate;
     private BookingDtoCreate bookingDtoCreate;
+
 
     @BeforeEach
     public void setUp() {
@@ -70,6 +73,19 @@ public class ItemServiceTest {
         bookingDtoTwoCreate = new BookingDtoCreate(null, SOME_TIME.plusNanos(1), SOME_TIME.plusNanos(2));
         bookingDtoCreate = new BookingDtoCreate(null,
                 LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2));
+    }
+
+    @AfterEach
+    public void reinitDatabase() throws SQLException {
+        var connection = dataSource.getConnection();
+        var statement = connection.createStatement();
+
+        statement.execute("SET REFERENTIAL_INTEGRITY FALSE; " +
+                "TRUNCATE TABLE USERS; " +
+                "TRUNCATE TABLE ITEMS; " +
+                "SET REFERENTIAL_INTEGRITY FALSE;");
+        statement.close();
+        connection.close();
     }
 
     @DisplayName("Should get item by owner")

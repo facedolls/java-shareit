@@ -1,12 +1,12 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -15,7 +15,9 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import javax.sql.DataSource;
 import javax.validation.ValidationException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -27,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.practicum.shareit.booking.BookingState.WAITING;
 import static ru.practicum.shareit.booking.BookingStatus.REJECTED;
 
-@Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(properties = "spring.datasource.url=jdbc:h2:mem:test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -35,6 +36,7 @@ public class BookingServiceTest {
     private final UserService userService;
     private final ItemService itemService;
     private final BookingService bookingService;
+    private final DataSource dataSource;
     private final LocalDateTime current = LocalDateTime.now();
     private UserDto userDtoOneCreate;
     private UserDto userDtoTwoCreate;
@@ -51,6 +53,18 @@ public class BookingServiceTest {
         itemDtoCreate = new ItemDto(null, "Vacuum cleaner", "industrial vacuum cleaner", false, null);
         bookingDtoCreate = new BookingDtoCreate(null, current.plusDays(1), current.plusDays(5));
         bookingDtoTwoCreate = new BookingDtoCreate(null, current.minusHours(20), current.minusHours(2));
+    }
+
+    @AfterEach
+    public void reinitDatabase() throws SQLException {
+        var connection = dataSource.getConnection();
+        var statement = connection.createStatement();
+
+        statement.execute("SET REFERENTIAL_INTEGRITY FALSE; " +
+                "TRUNCATE TABLE USERS; " +
+                "SET REFERENTIAL_INTEGRITY FALSE;");
+        statement.close();
+        connection.close();
     }
 
     @DisplayName("Should create booking")
