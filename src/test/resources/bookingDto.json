@@ -1,0 +1,16 @@
+{
+  "id": "1",
+  "start": "2020-01-01T01:01:01",
+  "end": "2020-01-04T01:01:01",
+  "status": "WAITING",
+  "booker": {
+    "name": "Paul",
+    "email": "paul@ya.ru"
+  },
+  "item": {
+    "name": "Angle grinder",
+    "description": "grinding-wheel",
+    "available": true,
+    "request": null
+  }
+}

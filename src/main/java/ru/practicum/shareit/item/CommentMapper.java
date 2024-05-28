@@ -8,8 +8,10 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
+import javax.annotation.Generated;
 import java.util.List;
 
+@Generated("org.mapstruct")
 @Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface CommentMapper {
     @Mapping(target = "authorName", source = "user.name")

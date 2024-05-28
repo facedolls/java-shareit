@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,8 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
 
-    public List<Comment> getCommentsByItemId(Long itemId) {
-        return commentRepository.findByItem_Id(itemId);
+    public List<Comment> getAllByItem_Id(Long itemId) {
+        return commentRepository.findAllByItem_Id(itemId);
     }
 
     public List<Comment> getCommentsByItemIdIn(List<Long> itemsId) {
