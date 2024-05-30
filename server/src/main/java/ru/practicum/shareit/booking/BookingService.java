@@ -69,7 +69,7 @@ public class BookingService {
         getUserIfTheExists(userId);
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Order.desc("start")));
         Collection<Booking> allBookings = getBookingsForBooker(bookingState, userId, pageable);
-        log.info("Information aboutbookings was obtained bybooker id={}", userId);
+        log.info("Information about bookings was obtained by booker id={}", userId);
         return bookingMapper.toBookingDto(allBookings);
     }
 
@@ -79,7 +79,7 @@ public class BookingService {
         getUserIfTheExists(userId);
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Order.desc("start")));
         Collection<Booking> allBookings = getBookingsForOwner(bookingState, userId, pageable);
-        log.info("Information aboutbookings was obtained byowner id={}", userId);
+        log.info("Information about bookings was obtained by owner id={}", userId);
         return bookingMapper.toBookingDto(allBookings);
     }
 

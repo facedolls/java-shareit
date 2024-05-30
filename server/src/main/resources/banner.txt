@@ -1,5 +1,5 @@
 ${AnsiColor.GREEN}   ______                ______
-${AnsiColor.GREEN}  / __/ /  ___ ________ /  _/ /_
-${AnsiColor.GREEN} _\ \/ _ \/ _ `/ __/ -_)/ // __/
-${AnsiColor.GREEN}/___/_//_/\_,_/_/  \__/___/\__/
+${AnsiColor.GREEN}  / __/ /  ___ ________ /  _/ /_   ___ ___ _____  _____ ____
+${AnsiColor.GREEN} _\ \/ _ \/ _ `/ __/ -_)/ // __/  (_-</ -_) __/ |/ / -_) __/
+${AnsiColor.GREEN}/___/_//_/\_,_/_/  \__/___/\__/  /___/\__/_/  |___/\__/_/
 ${AnsiColor.DEFAULT}on Spring Boot ${spring-boot.version}

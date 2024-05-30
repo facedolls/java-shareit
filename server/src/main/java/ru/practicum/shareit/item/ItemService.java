@@ -56,7 +56,7 @@ public class ItemService {
             return itemMapper.toOneItemDtoInfoForAllUsers(item, commentDto);
         }
 
-        log.info("Information aboutitem id={} was obtained byuser id={}", itemId, userId);
+        log.info("Information about item id={} was obtained by user id={}", itemId, userId);
         return setBookingsForOwner(List.of(item), List.of(itemId), commentsItem).stream().findFirst().orElse(null);
     }
 
