@@ -6,7 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.validated.Create;
+import ru.practicum.shareit.validated.Update;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -19,13 +22,13 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Object> createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
         return userClient.createUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public ResponseEntity<Object> updateUser(@PathVariable @Positive @NotNull Long userId,
-                                             @RequestBody UserDto userDto) {
+                                             @Validated(Update.class) @RequestBody UserDto userDto) {
         return userClient.updateUser(userId, userDto);
     }
 
@@ -35,8 +38,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllUser() {
-        return userClient.getAllUsers();
+    public ResponseEntity<Object> getAllUser(@RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                             @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+        return userClient.getAllUser(from, size);
     }
 
     @DeleteMapping("/{userId}")

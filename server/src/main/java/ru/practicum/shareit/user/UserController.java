@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.validated.Create;
-import ru.practicum.shareit.validated.Update;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -33,13 +31,13 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@Validated(Create.class) @RequestBody UserDto userDto) {
+    public UserDto createUser(@RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable @Positive @NotNull Long userId,
-                              @Validated(Update.class) @RequestBody UserDto userDto) {
+                              @RequestBody UserDto userDto) {
         return userService.updateUser(userId, userDto);
     }
 

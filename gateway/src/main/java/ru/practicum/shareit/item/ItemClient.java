@@ -27,6 +27,15 @@ public class ItemClient extends BaseClient {
         );
     }
 
+    public ResponseEntity<Object> getItemById(Long itemId, Long userId) {
+        return get("/" + itemId, userId);
+    }
+
+    public ResponseEntity<Object> getAllItemUser(Long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of("from", from, "size", size);
+        return get("?from={from}&size={size}", userId, parameters);
+    }
+
     public ResponseEntity<Object> createItem(ItemDto itemDto, Long userId) {
         return post("", userId, itemDto);
     }
@@ -35,28 +44,12 @@ public class ItemClient extends BaseClient {
         return patch("/" + itemId, userId, itemDto);
     }
 
-    public ResponseEntity<Object> getAllItemUser(Long userId, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "from", from,
-                "size", size
-        );
-        return get("?from={from}&size={size}", userId, parameters);
+    public ResponseEntity<Object> searchItems(String text, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of("text", text, "from", from, "size", size);
+        return get("/search?text={text}&from={from}&size={size}", parameters);
     }
 
-    public ResponseEntity<Object> getItemDtoById(Long itemId, Long userId) {
-        return get("/" + itemId, userId);
-    }
-
-    public ResponseEntity<Object> searchItems(Long userId, String text, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "text", text,
-                "from", from,
-                "size", size
-        );
-        return get("/search?text={text}&from={from}&size={size}", userId, parameters);
-    }
-
-    public ResponseEntity<Object> createComment(CommentDto commentDto, Long itemId, Long userId) {
+    public ResponseEntity<Object> createComment(CommentDto commentDto, Long userId, Long itemId) {
         return post("/" + itemId + "/comment", userId, commentDto);
     }
 }

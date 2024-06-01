@@ -7,6 +7,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.validated.Create;
+import ru.practicum.shareit.validated.Update;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -21,24 +23,10 @@ public class ItemController {
     private static final String USER_ID = "X-Sharer-User-Id";
     private final ItemClient itemClient;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createItem(@RequestBody ItemDto itemDto,
-                                             @RequestHeader(USER_ID) Long userId) {
-        return itemClient.createItem(itemDto, userId);
-    }
-
-    @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestBody ItemDto itemDto,
-                                             @PathVariable @Positive @NotNull Long itemId,
-                                             @RequestHeader(USER_ID) Long userId) {
-        return itemClient.updateItem(itemDto, itemId, userId);
-    }
-
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getItemById(@PathVariable @Positive @NotNull Long itemId,
                                               @RequestHeader(USER_ID) Long userId) {
-        return itemClient.getItemDtoById(itemId, userId);
+        return itemClient.getItemById(itemId, userId);
     }
 
     @GetMapping
@@ -48,11 +36,25 @@ public class ItemController {
         return itemClient.getAllItemUser(userId, from, size);
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Object> createItem(@Validated(Create.class) @RequestBody ItemDto itemDto,
+                                             @RequestHeader(USER_ID) Long userId) {
+        return itemClient.createItem(itemDto, userId);
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Object> updateItem(@Validated(Update.class) @RequestBody ItemDto itemDto,
+                                             @PathVariable @Positive @NotNull Long itemId,
+                                             @RequestHeader(USER_ID) Long userId) {
+        return itemClient.updateItem(itemDto, itemId, userId);
+    }
+
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItems(@RequestHeader(USER_ID) Long userId, @RequestParam String text,
+    public ResponseEntity<Object> searchItems(@RequestParam String text,
                                               @RequestParam(defaultValue = "0") @Min(0) Integer from,
                                               @RequestParam(defaultValue = "10") @Min(1) Integer size) {
-        return itemClient.searchItems(userId, text, from, size);
+        return itemClient.searchItems(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

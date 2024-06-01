@@ -6,7 +6,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
-import ru.practicum.shareit.booking.dto.validator.ValidState;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -44,7 +43,7 @@ public class BookingController {
 
     @GetMapping
     public Collection<BookingDto> getAllBookingsBooker(@RequestHeader(USER_ID) Long userId,
-                                                       @RequestParam(defaultValue = "ALL") @ValidState String state,
+                                                       @RequestParam(defaultValue = "ALL") String state,
                                                        @RequestParam(defaultValue = "0") @Min(0) Integer from,
                                                        @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return bookingService.getAllBookingsBooker(userId, BookingState.valueOf(state), from, size);
@@ -52,7 +51,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public Collection<BookingDto> getAllBookingsOwner(@RequestHeader(USER_ID) Long userId,
-                                                      @RequestParam(defaultValue = "ALL") @ValidState String state,
+                                                      @RequestParam(defaultValue = "ALL") String state,
                                                       @RequestParam(defaultValue = "0") @Min(0) Integer from,
                                                       @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return bookingService.getAllBookingsOwner(userId, BookingState.valueOf(state), from, size);

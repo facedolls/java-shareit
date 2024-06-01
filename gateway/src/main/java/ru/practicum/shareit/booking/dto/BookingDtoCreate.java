@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
+import ru.practicum.shareit.booking.dto.validator.ValidBookingCreate;
 
 import java.time.LocalDateTime;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@ValidBookingCreate
 public class BookingDtoCreate {
     private Long itemId;
     private LocalDateTime start;

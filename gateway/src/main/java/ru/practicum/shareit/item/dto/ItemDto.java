@@ -1,6 +1,8 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.*;
+import ru.practicum.shareit.validated.Create;
+import ru.practicum.shareit.validated.Update;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,15 +17,15 @@ import javax.validation.constraints.Size;
 @Builder
 @EqualsAndHashCode
 public class ItemDto {
-    @Positive
+    @Positive(groups = Update.class)
     private Long id;
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(groups = Create.class)
+    @Size(max = 50, groups = Create.class)
     private String name;
-    @NotBlank
-    @Size(max = 200)
+    @NotBlank(groups = Create.class)
+    @Size(max = 200, groups = Create.class)
     private String description;
-    @NotNull
+    @NotNull(groups = Create.class)
     private Boolean available;
     private Long requestId;
 }

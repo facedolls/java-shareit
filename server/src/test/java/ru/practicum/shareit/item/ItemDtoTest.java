@@ -11,8 +11,6 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.core.io.ClassPathResource;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.validated.Create;
-import ru.practicum.shareit.validated.Update;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -68,18 +66,5 @@ public class ItemDtoTest {
         String content = Files.readString(resource.getFile().toPath());
 
         assertThat(this.json.parse(content)).isEqualTo(itemDto);
-    }
-
-    @DisplayName("Should validation")
-    @Test
-    public void shouldValidation() {
-        ItemDto itemDto = new ItemDto(0L, "", "", null, 0L);
-        ItemDto itemDtoTwo = new ItemDto(-1L, "Angle grinder", "grinding-wheel", true, 1L);
-
-        Set<ConstraintViolation<ItemDto>> violations = validator.validate(itemDto, Create.class);
-        Set<ConstraintViolation<ItemDto>> violationsTwo = validator.validate(itemDtoTwo, Update.class);
-
-        assertThat(violations).isNotEmpty();
-        assertThat(violationsTwo).isNotEmpty();
     }
 }

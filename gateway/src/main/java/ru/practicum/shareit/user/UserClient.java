@@ -10,6 +10,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import java.util.Map;
+
 @Service
 public class UserClient extends BaseClient {
     private static final String API_PREFIX = "/users";
@@ -24,23 +26,24 @@ public class UserClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createUser(UserDto requestDto) {
-        return post("", requestDto);
-    }
-
-    public ResponseEntity<Object> updateUser(Long userId, UserDto requestDto) {
-        return patch("/" + userId, requestDto);
-    }
-
-    public ResponseEntity<Object> getAllUsers() {
-        return get("");
-    }
-
     public ResponseEntity<Object> getUserById(Long userId) {
-        return get("/" + userId);
+        return get("/" + userId, userId);
     }
 
-    public void deleteUserById(Long userId) {
-        delete("/" + userId);
+    public ResponseEntity<Object> getAllUser(Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of("from", from, "size", size);
+        return get("?from={from}&size={size}", parameters);
+    }
+
+    public ResponseEntity<Object> createUser(UserDto userDto) {
+        return post("", userDto);
+    }
+
+    public ResponseEntity<Object> updateUser(Long userId, UserDto userDto) {
+        return patch("/" + userId, userId, userDto);
+    }
+
+    public ResponseEntity<Object> deleteUserById(Long userId) {
+        return delete("/" + userId, userId);
     }
 }
