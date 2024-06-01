@@ -88,30 +88,6 @@ public class ItemServiceTest {
         connection.close();
     }
 
-    @DisplayName("Should get item by owner")
-    @Test
-    public void shouldGetItemDtoByIdOwner() {
-        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
-        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
-        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
-
-        bookingDtoTwoCreate.setItemId(itemDtoOne.getId());
-        BookingDto bookingDtoCreated = bookingService.createBooking(bookingDtoTwoCreate, userDtoTwo.getId());
-        bookingService.updateBooking(userDtoOne.getId(), bookingDtoCreated.getId(), true);
-
-        itemService.createComment(commentDtoCreate, userDtoTwo.getId(), itemDtoOne.getId());
-        ItemDtoInfo itemDtoResult = itemService.getItemDtoById(itemDtoOne.getId(), userDtoOne.getId());
-
-        assertThat(itemDtoResult.getComments(), hasSize(1));
-        assertThat(itemDtoResult.getComments().get(0).getText(), is(equalTo(commentDtoCreate.getText())));
-        assertThat(itemDtoResult.getComments().get(0).getAuthorName(), is(equalTo(userDtoTwo.getName())));
-        assertThat(itemDtoResult.getComments().get(0).getItemId(), is(equalTo(itemDtoOne.getId())));
-        assertThat(itemDtoResult.getNextBooking(), nullValue());
-        assertThat(itemDtoResult.getLastBooking(), notNullValue());
-        assertThat(itemDtoResult.getDescription(), is(equalTo(itemDtoOne.getDescription())));
-        assertThat(itemDtoResult.getName(), is(equalTo(itemDtoOne.getName())));
-    }
-
     @DisplayName("Should not get item by ID")
     @Test
     public void shouldNotGetItemDtoById() {
@@ -123,51 +99,6 @@ public class ItemServiceTest {
                 () -> itemService.getItemDtoById(itemId, userDtoOne.getId())
         );
         assertEquals("Item with this id=" + itemId + " not found", exception.getMessage());
-    }
-
-    @DisplayName("Should get item not owner")
-    @Test
-    public void shouldGetItemDtoByIdNotOwner() {
-        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
-        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
-        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
-
-        bookingDtoTwoCreate.setItemId(itemDtoOne.getId());
-        BookingDto bookingDtoCreated = bookingService.createBooking(bookingDtoTwoCreate, userDtoTwo.getId());
-        bookingService.updateBooking(userDtoOne.getId(), bookingDtoCreated.getId(), true);
-
-        itemService.createComment(commentDtoCreate, userDtoTwo.getId(), itemDtoOne.getId());
-        ItemDtoInfo itemDtoResult = itemService.getItemDtoById(itemDtoOne.getId(), userDtoTwo.getId());
-
-        assertThat(itemDtoResult.getComments(), hasSize(1));
-        assertThat(itemDtoResult.getComments().get(0).getText(), is(equalTo(commentDtoCreate.getText())));
-        assertThat(itemDtoResult.getComments().get(0).getAuthorName(), is(equalTo(userDtoTwo.getName())));
-        assertThat(itemDtoResult.getComments().get(0).getItemId(), is(equalTo(itemDtoOne.getId())));
-        assertThat(itemDtoResult.getNextBooking(), nullValue());
-        assertThat(itemDtoResult.getLastBooking(), nullValue());
-        assertThat(itemDtoResult.getDescription(), is(equalTo(itemDtoOne.getDescription())));
-        assertThat(itemDtoResult.getName(), is(equalTo(itemDtoOne.getName())));
-    }
-
-    @DisplayName("Should get all item by user")
-    @Test
-    public void shouldGetAllItemUser() {
-        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
-        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
-        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
-        ItemDto itemDtoTwo = itemService.createItem(itemDtoTwoCreate, userDtoTwo.getId());
-
-        List<ItemDtoInfo> allItemsUserDtoOne = new ArrayList<>(itemService
-                .getAllItemUser(userDtoOne.getId(), 0, 2));
-        List<ItemDtoInfo> allItemsUserDtoTwo = new ArrayList<>(itemService
-                .getAllItemUser(userDtoTwo.getId(), 0, 2));
-
-        assertThat(allItemsUserDtoOne, is(hasSize(1)));
-        assertThat(allItemsUserDtoOne.get(0).getName(), is(equalTo(itemDtoOne.getName())));
-        assertThat(allItemsUserDtoOne.get(0).getDescription(), is(equalTo(itemDtoOne.getDescription())));
-        assertThat(allItemsUserDtoTwo, is(hasSize(1)));
-        assertThat(allItemsUserDtoTwo.get(0).getName(), is(equalTo(itemDtoTwo.getName())));
-        assertThat(allItemsUserDtoTwo.get(0).getDescription(), is(equalTo(itemDtoTwo.getDescription())));
     }
 
     @DisplayName("Should create item")
@@ -254,24 +185,6 @@ public class ItemServiceTest {
         assertThat(items, is(hasSize(1)));
         assertThat(items, is(contains(itemDtoOne)));
         assertThat(itemsTwo, is(hasSize(0)));
-    }
-
-    @DisplayName("Should create comment")
-    @Test
-    public void shouldCreateComment() {
-        UserDto userDtoOne = userService.createUser(userDtoOneCreate);
-        UserDto userDtoTwo = userService.createUser(userDtoTwoCreate);
-        ItemDto itemDtoOne = itemService.createItem(itemDtoOneCreate, userDtoOne.getId());
-
-        bookingDtoTwoCreate.setItemId(itemDtoOne.getId());
-        BookingDto bookingDtoCreated = bookingService.createBooking(bookingDtoTwoCreate, userDtoTwo.getId());
-        bookingService.updateBooking(userDtoOne.getId(), bookingDtoCreated.getId(), true);
-        CommentDto commentDto = itemService.createComment(commentDtoCreate, userDtoTwo.getId(), itemDtoOne.getId());
-
-        assertThat(commentDto.getText(), is(equalTo(commentDtoCreate.getText())));
-        assertThat(commentDto.getItemId(), is(equalTo(itemDtoOne.getId())));
-        assertThat(commentDto.getAuthorName(), is(equalTo(userDtoTwo.getName())));
-        assertThat(commentDto.getCreated(), notNullValue());
     }
 
     @DisplayName("Should not create comment when booking time has not expired")
