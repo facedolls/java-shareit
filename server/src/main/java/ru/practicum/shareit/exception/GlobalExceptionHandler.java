@@ -6,12 +6,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestControllerAdvice("ru.practicum")
 @Slf4j
 public class GlobalExceptionHandler {
@@ -27,18 +21,6 @@ public class GlobalExceptionHandler {
     public GlobalErrorResponse handleConflictException(final ConflictException e) {
         log.warn("409 {}", e.getMessage(), e);
         return new GlobalErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public GlobalErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
-        List<String> errors = e.getConstraintViolations().stream()
-                .map(ConstraintViolation::getMessageTemplate)
-                .collect(Collectors.toList());
-
-        log.warn("400 {}", errors);
-        String errorMessage = String.join(", ", errors);
-        return new GlobalErrorResponse(errorMessage);
     }
 
     @ExceptionHandler

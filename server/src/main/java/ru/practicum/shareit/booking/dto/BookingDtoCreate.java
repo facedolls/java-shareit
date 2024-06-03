@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @ToString
+@Builder
 @EqualsAndHashCode
 public class BookingDtoCreate {
     private Long itemId;

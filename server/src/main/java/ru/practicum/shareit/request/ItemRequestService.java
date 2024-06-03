@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoInfo;
@@ -23,6 +24,7 @@ public class ItemRequestService {
     private final UserService userService;
     private final ItemRequestMapper itemRequestMapper;
 
+    @Transactional
     public ItemRequestDtoInfo createItemRequest(ItemRequestDto itemRequestDto, Long userId) {
         User requester = getUserIfTheExists(userId);
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(itemRequestDto, requester, LocalDateTime.now());
@@ -32,6 +34,7 @@ public class ItemRequestService {
         return itemRequestMapper.toItemRequestDtoInfo(createdItemRequest);
     }
 
+    @Transactional(readOnly = true)
     public List<ItemRequestDtoInfo> getListOfRequestsForItemsUser(Long userId) {
         getUserIfTheExists(userId);
         List<ItemRequest> allRequestsUser = itemRequestRepository.findAllByRequester_IdOrderByCreatedDesc(userId);
@@ -40,6 +43,7 @@ public class ItemRequestService {
         return itemRequestMapper.toItemRequestDtoInfoList(allRequestsUser);
     }
 
+    @Transactional(readOnly = true)
     public List<ItemRequestDtoInfo> getItemRequestsPageByPage(Integer from, Integer size, Long userId) {
         getUserIfTheExists(userId);
         Pageable pageable = PageRequest.of(from / size, size, Sort.by(Sort.Order.desc("created")));
@@ -49,6 +53,7 @@ public class ItemRequestService {
         return itemRequestMapper.toItemRequestDtoInfoList(requests);
     }
 
+    @Transactional(readOnly = true)
     public ItemRequestDtoInfo getItemRequestById(Long requestId, Long userId) {
         getUserIfTheExists(userId);
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() -> {

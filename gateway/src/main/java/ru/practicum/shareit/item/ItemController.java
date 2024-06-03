@@ -20,7 +20,9 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class ItemController {
-    private static final String USER_ID = "X-Sharer-User-Id";
+    public static final String USER_ID = "X-Sharer-User-Id";
+    public static final String PAGE_FROM = "0";
+    public static final String PAGE_SIZE = "10";
     private final ItemClient itemClient;
 
     @GetMapping("/{itemId}")
@@ -31,8 +33,8 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<Object> getAllItemUser(@RequestHeader(USER_ID) Long userId,
-                                                 @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                 @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+                                                 @RequestParam(defaultValue = PAGE_FROM) @Min(0) Integer from,
+                                                 @RequestParam(defaultValue = PAGE_SIZE) @Min(1) Integer size) {
         return itemClient.getAllItemUser(userId, from, size);
     }
 
@@ -52,8 +54,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> searchItems(@RequestParam String text,
-                                              @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                              @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+                                              @RequestParam(defaultValue = PAGE_FROM) @Min(0) Integer from,
+                                              @RequestParam(defaultValue = PAGE_SIZE) @Min(1) Integer size) {
         return itemClient.searchItems(text, from, size);
     }
 

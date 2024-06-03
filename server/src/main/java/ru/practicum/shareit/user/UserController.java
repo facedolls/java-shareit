@@ -2,30 +2,27 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Validated
 public class UserController {
+    public static final String PAGE_FROM = "0";
+    public static final String PAGE_SIZE = "10";
     private final UserService userService;
 
     @GetMapping("/{userId}")
-    public UserDto getUserById(@PathVariable @Positive @NotNull Long userId) {
+    public UserDto getUserById(@PathVariable Long userId) {
         return userService.getUserById(userId);
     }
 
     @GetMapping
-    public Collection<UserDto> getAllUser(@RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                          @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+    public Collection<UserDto> getAllUser(@RequestParam(defaultValue = PAGE_FROM) Integer from,
+                                          @RequestParam(defaultValue = PAGE_SIZE) Integer size) {
         return userService.getAllUsers(from, size);
     }
 
@@ -36,13 +33,12 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@PathVariable @Positive @NotNull Long userId,
-                              @RequestBody UserDto userDto) {
+    public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
         return userService.updateUser(userId, userDto);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable @Positive @NotNull Long userId) {
+    public void deleteUserById(@PathVariable Long userId) {
         userService.deleteUserById(userId);
     }
 }

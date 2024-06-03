@@ -60,13 +60,4 @@ public class ItemRequestDtoTest {
 
         assertThat(this.json.parse(content)).isEqualTo(itemRequestDto);
     }
-
-    @DisplayName("Should be valid")
-    @Test
-    public void shouldValidation() {
-        ItemRequestDto itemRequestDto = new ItemRequestDto("");
-        Set<ConstraintViolation<ItemRequestDto>> violations = validator.validate(itemRequestDto);
-
-        assertThat(violations).isNotEmpty();
-    }
 }

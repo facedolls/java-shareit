@@ -10,12 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoCreate;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -112,7 +114,7 @@ public class BookingService {
 
     private void getExceptionIfUserIsNotOwner(Long userId, Booking booking) {
         if (!booking.getItem().getOwner().getId().equals(userId)) {
-            log.warn("User id={} for booking id={} is notowner", userId, booking.getId());
+            log.warn("User id={} for booking id={} is not owner", userId, booking.getId());
             throw new NotFoundException("Booking id=" + booking.getId() + " not found");
         }
     }

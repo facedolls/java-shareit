@@ -16,7 +16,9 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class ItemRequestController {
-    private static final String USER_ID = "X-Sharer-User-Id";
+    public static final String USER_ID = "X-Sharer-User-Id";
+    public static final String PAGE_FROM = "0";
+    public static final String PAGE_SIZE = "10";
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
@@ -32,8 +34,10 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> getItemRequestsPageByPage(@RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                            @RequestParam(defaultValue = "10") @Min(1) Integer size,
+    public ResponseEntity<Object> getItemRequestsPageByPage(@RequestParam(defaultValue = PAGE_FROM)
+                                                            @Min(0) Integer from,
+                                                            @RequestParam(defaultValue = PAGE_SIZE)
+                                                            @Min(1) Integer size,
                                                             @RequestHeader(USER_ID) Long userId) {
         return itemRequestClient.getItemRequestsPageByPage(from, size, userId);
     }

@@ -18,7 +18,20 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class UserController {
+    public static final String PAGE_FROM = "0";
+    public static final String PAGE_SIZE = "10";
     private final UserClient userClient;
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<Object> getUserById(@PathVariable @Positive @NotNull Long userId) {
+        return userClient.getUserById(userId);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllUser(@RequestParam(defaultValue = PAGE_FROM) @Min(0) Integer from,
+                                             @RequestParam(defaultValue = PAGE_SIZE) @Min(1) Integer size) {
+        return userClient.getAllUser(from, size);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,19 +45,8 @@ public class UserController {
         return userClient.updateUser(userId, userDto);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<Object> getUserById(@PathVariable @Positive @NotNull Long userId) {
-        return userClient.getUserById(userId);
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> getAllUser(@RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                             @RequestParam(defaultValue = "10") @Min(1) Integer size) {
-        return userClient.getAllUser(from, size);
-    }
-
     @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable @Positive @NotNull Long userId) {
-        userClient.deleteUserById(userId);
+    public ResponseEntity<Object> deleteUserById(@PathVariable @Positive @NotNull Long userId) {
+        return userClient.deleteUserById(userId);
     }
 }

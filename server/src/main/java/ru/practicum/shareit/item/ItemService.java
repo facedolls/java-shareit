@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.BookingItemService;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingDtoInfo;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoInfo;
@@ -22,7 +23,6 @@ import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,8 +76,9 @@ public class ItemService {
     @Transactional
     public ItemDto createItem(ItemDto itemDto, Long userId) {
         User user = getUserIfTheExists(userId);
-        Long requestId = itemDto.getRequestId();
-        ItemRequest itemRequest = requestId == null ? null : itemRequestService.findById(requestId);
+        ItemRequest itemRequest = itemDto.getRequestId() == null ? null :
+                itemRequestService.findById(itemDto.getRequestId());
+
         Item item = itemRepository.save(itemMapper.toItem(itemDto, user, itemRequest));
         log.info("Item has been created={}", item);
         return itemMapper.toItemDto(item);
@@ -122,7 +123,7 @@ public class ItemService {
     public CommentDto createComment(CommentDto commentDto, Long userId, Long itemId) {
         User user = getUserIfTheExists(userId);
         Item item = itemRepository.findById(itemId).orElseThrow(() -> {
-            log.warn("User={} try to leave review for item id={} that doesn't exist", userId, itemId);
+            log.warn("A user={} wants to leave a review for an item id={} that doesn't exist", userId, itemId);
             throw new ValidationException("Item doesn't exist yet");
         });
         getExceptionIfIsNotBookerOfThisItem(userId, itemId);

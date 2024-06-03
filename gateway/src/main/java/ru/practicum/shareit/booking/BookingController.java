@@ -18,7 +18,10 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class BookingController {
-    private static final String USER_ID = "X-Sharer-User-Id";
+    public static final String USER_ID = "X-Sharer-User-Id";
+    public static final String STATE_DEFAULT = "ALL";
+    public static final String PAGE_FROM_DEFAULT = "0";
+    public static final String PAGE_SIZE_DEFAULT = "10";
     private final BookingClient bookingClient;
 
     @PostMapping
@@ -32,7 +35,7 @@ public class BookingController {
     public ResponseEntity<Object> updateBooking(@RequestHeader(USER_ID) Long userId,
                                                 @PathVariable @Positive @NotNull Long bookingId,
                                                 @RequestParam @NotNull Boolean approved) {
-        return bookingClient.updateBooking(userId, bookingId, approved);
+        return bookingClient.updateBooking(bookingId, userId, approved);
     }
 
     @GetMapping("/{bookingId}")
@@ -43,17 +46,23 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getAllBookingsBooker(@RequestHeader(USER_ID) Long userId,
-                                                       @RequestParam(defaultValue = "ALL") @ValidState String state,
-                                                       @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                       @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+                                                       @RequestParam(defaultValue = STATE_DEFAULT)
+                                                       @ValidState String state,
+                                                       @RequestParam(defaultValue = PAGE_FROM_DEFAULT)
+                                                       @Min(0) Integer from,
+                                                       @RequestParam(defaultValue = PAGE_SIZE_DEFAULT)
+                                                       @Min(1) Integer size) {
         return bookingClient.getAllBookingsBooker(userId, BookingState.valueOf(state), from, size);
     }
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getAllBookingsOwner(@RequestHeader(USER_ID) Long userId,
-                                                      @RequestParam(defaultValue = "ALL") @ValidState String state,
-                                                      @RequestParam(defaultValue = "0") @Min(0) Integer from,
-                                                      @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+                                                      @RequestParam(defaultValue = STATE_DEFAULT)
+                                                      @ValidState String state,
+                                                      @RequestParam(defaultValue = PAGE_FROM_DEFAULT)
+                                                      @Min(0) Integer from,
+                                                      @RequestParam(defaultValue = PAGE_SIZE_DEFAULT)
+                                                      @Min(1) Integer size) {
         return bookingClient.getAllBookingsOwner(userId, BookingState.valueOf(state), from, size);
     }
 }
