@@ -12,12 +12,10 @@ import org.springframework.boot.test.json.JsonContent;
 import org.springframework.core.io.ClassPathResource;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.nio.file.Files;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
