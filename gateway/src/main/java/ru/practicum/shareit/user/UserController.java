@@ -18,8 +18,8 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class UserController {
-    public static final String PAGE_FROM = "0";
-    public static final String PAGE_SIZE = "10";
+    private static final String PAGE_FROM = "0";
+    private static final String PAGE_SIZE = "10";
     private final UserClient userClient;
 
     @GetMapping("/{userId}")

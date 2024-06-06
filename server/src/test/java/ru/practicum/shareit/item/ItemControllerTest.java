@@ -31,8 +31,8 @@ import static ru.practicum.shareit.booking.BookingStatus.APPROVED;
 
 @WebMvcTest(ItemController.class)
 public class ItemControllerTest {
-    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    public static final LocalDateTime SOME_TIME = LocalDateTime.parse("2020-01-01T01:01:01", DATE_FORMAT);
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static final LocalDateTime SOME_TIME = LocalDateTime.parse("2020-01-01T01:01:01", DATE_FORMAT);
     private static final String USER_ID = "X-Sharer-User-Id";
 
     @Autowired

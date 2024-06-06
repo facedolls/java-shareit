@@ -12,9 +12,9 @@ import java.util.List;
 @RequestMapping("/requests")
 @RequiredArgsConstructor
 public class ItemRequestController {
-    public static final String USER_ID = "X-Sharer-User-Id";
-    public static final String PAGE_FROM = "0";
-    public static final String PAGE_SIZE = "10";
+    private static final String USER_ID = "X-Sharer-User-Id";
+    private static final String PAGE_FROM = "0";
+    private static final String PAGE_SIZE = "10";
     private final ItemRequestService itemRequestService;
 
     @PostMapping

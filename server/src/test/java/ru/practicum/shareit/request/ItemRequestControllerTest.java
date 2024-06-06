@@ -31,8 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ItemRequestController.class)
 public class ItemRequestControllerTest {
-    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    public static final LocalDateTime TIME_NOW = LocalDateTime.now();
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static final LocalDateTime TIME_NOW = LocalDateTime.now();
     private static final String USER_ID = "X-Sharer-User-Id";
     @Autowired
     private MockMvc mvc;

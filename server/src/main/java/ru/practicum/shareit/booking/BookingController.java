@@ -12,10 +12,10 @@ import java.util.Collection;
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 public class BookingController {
-    public static final String USER_ID = "X-Sharer-User-Id";
-    public static final String STATE = "ALL";
-    public static final String PAGE_FROM = "0";
-    public static final String PAGE_SIZE = "10";
+    private static final String USER_ID = "X-Sharer-User-Id";
+    private static final String STATE = "ALL";
+    private static final String PAGE_FROM = "0";
+    private static final String PAGE_SIZE = "10";
     private final BookingService bookingService;
 
     @PostMapping

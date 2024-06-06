@@ -18,10 +18,10 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @Validated
 public class BookingController {
-    public static final String USER_ID = "X-Sharer-User-Id";
-    public static final String STATE_DEFAULT = "ALL";
-    public static final String PAGE_FROM_DEFAULT = "0";
-    public static final String PAGE_SIZE_DEFAULT = "10";
+    private static final String USER_ID = "X-Sharer-User-Id";
+    private static final String STATE_DEFAULT = "ALL";
+    private static final String PAGE_FROM_DEFAULT = "0";
+    private static final String PAGE_SIZE_DEFAULT = "10";
     private final BookingClient bookingClient;
 
     @PostMapping
