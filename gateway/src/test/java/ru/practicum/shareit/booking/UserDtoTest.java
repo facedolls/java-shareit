@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.booking;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.core.io.ClassPathResource;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @JsonTest
 @AutoConfigureJsonTesters
-public class ItemDtoTest {
+class UserDtoTest {
     @Autowired
-    private JacksonTester<ItemDto> json;
+    private JacksonTester<UserDto> json;
     private Validator validator;
 
     @BeforeEach
@@ -35,34 +35,30 @@ public class ItemDtoTest {
     @DisplayName("Should serialize")
     @Test
     @SneakyThrows
-    public void shouldSerialize() {
-        ItemDto itemDto = ItemDto.builder()
-                .name("Angle grinder")
-                .description("grinding-wheel")
-                .available(true)
+    void shouldSerialize() {
+        UserDto userDto = UserDto.builder()
+                .name("Paul")
+                .email("paul@ya.ru")
                 .build();
 
-        JsonContent<ItemDto> itemDtoJson = this.json.write(itemDto);
+        JsonContent<UserDto> userDtoJson = this.json.write(userDto);
 
-        assertThat(itemDtoJson).hasJsonPathValue("$.name");
-        assertThat(itemDtoJson).extractingJsonPathStringValue("$.name").isEqualTo("Angle grinder");
+        assertThat(userDtoJson).hasJsonPathValue("$.name");
+        assertThat(userDtoJson).extractingJsonPathStringValue("$.name").isEqualTo("Paul");
 
-        assertThat(itemDtoJson).hasJsonPathValue("$.description");
-        assertThat(itemDtoJson).extractingJsonPathStringValue("$.description").isEqualTo("grinding-wheel");
-
-        assertThat(itemDtoJson).hasJsonPathValue("$.available");
-        assertThat(itemDtoJson).extractingJsonPathBooleanValue("$.available").isEqualTo(true);
+        assertThat(userDtoJson).hasJsonPathValue("$.email");
+        assertThat(userDtoJson).extractingJsonPathStringValue("$.email").isEqualTo("paul@ya.ru");
     }
 
     @DisplayName("Should deserialize")
     @Test
     @SneakyThrows
-    public void shouldDeserialize() {
-        ItemDto itemDto = new ItemDto(null, "Angle grinder", "grinding-wheel", true, null);
+    void shouldDeserialize() {
+        UserDto userDto = new UserDto(null, "Paul", "paul@ya.ru");
 
-        var resource = new ClassPathResource("itemDto.json");
+        var resource = new ClassPathResource("userDto.json");
         String content = Files.readString(resource.getFile().toPath());
 
-        assertThat(this.json.parse(content)).isEqualTo(itemDto);
+        assertThat(this.json.parse(content)).isEqualTo(userDto);
     }
 }
